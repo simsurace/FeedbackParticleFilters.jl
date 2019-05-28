@@ -54,7 +54,7 @@ trajectories = Simulate(filt_prob, filter, EM(), dt=0.01) # solve SDEs using the
 ## Tutorials
 
 There are various Jupyter notebooks that explore various key functions of the package:
-1. Bais [tutorial](notebooks/Basic_tutorial.ipynb)
+1. Basic [tutorial](notebooks/Basic_tutorial.ipynb)
 2. Gain estimation using the [semigroup method](notebooks/Gain_semigroup.ipynb)
 
 ## Documentation
