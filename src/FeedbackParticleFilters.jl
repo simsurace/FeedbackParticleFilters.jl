@@ -8,7 +8,10 @@ using LinearAlgebra
 include("ParticleEnsembles.jl")
 export
     UnweightedParticleEnsemble,
-    FPFEnsemble
+    FPFEnsemble,
+    ObservationData,
+    GainData,
+    func
 
 include("ObservationModels.jl")
 export
@@ -34,5 +37,6 @@ export
 include("Propagation.jl")
 export
     ApplyGain!
+
 
 end # module

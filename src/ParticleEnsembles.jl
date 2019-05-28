@@ -9,7 +9,7 @@ abstract type GainData{T1,T2} end;
 
 
 """
-    FPFEnsemble{T1,T2}(positions::Array{T1,1}, size::Int64, obs_data::ObservationData{T2}, gain_data::GainData{T1,T2})
+    FPFEnsemble{T1,T2}
 
 Feedback particle filter ensemble state that keeps track of particle `positions` of type `T1`, observation data (whose structure varies depending on the observation model), and gain data (whose structure varies depending on the gain estimation method).
 """
@@ -19,3 +19,4 @@ mutable struct FPFEnsemble{T1,T2} <: UnweightedParticleEnsemble{T1}
     obs_data::ObservationData{T2}
     gain_data::GainData{T1,T2}
 end
+
