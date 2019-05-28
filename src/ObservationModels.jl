@@ -13,7 +13,7 @@ abstract type ObservationModel end
 A diffusion process observation model dY_t = h(X_t)dt + dV_t, where h is the `observation_function`, X_t is the hidden state at time t,
 and V_t is an m-dimensional Brownian motion process.
 """
-struct DiffusionObservationModel
+struct DiffusionObservationModel <: ObservationModel
     observation_function::Function
     m::Int
 end
@@ -24,13 +24,8 @@ end
 A diffusion process observation model dY_t = h(X_t)dt + dV_t, where h is the `observation_function`, X_t is the hidden state at time t,
 and V_t is a 1-dimensional Brownian motion process.
 """
-struct DiffusionObservationModel1d
+struct ScalarDiffusionObservationModel <: ObservationModel
     observation_function::Function
-end
-
-mutable struct ScalarObservationData <: ObservationData{Float64}
-    H::Array{Float64,1}
-    mean_H::Float64
 end
 
 """
@@ -38,8 +33,13 @@ end
 
 A conditional m-variate Poisson process observation model with intensity h(X_t), where h is the `observation_function' and X_t is the hidden state at time t. The log observation function is represented explicitly for reasons of efficiency.
 """
-struct PointprocessObservationModel
+struct PointprocessObservationModel <: ObservationModel
     observation_function::Function
     log_observation_function::Function
     m::Int
+end
+
+struct ScalarPointprocessObservationModel <: ObservationModel
+    observation_function::Function
+    log_observation_function::Function
 end

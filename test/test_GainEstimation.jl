@@ -1,6 +1,6 @@
 @testset "Gain equations" begin
     println("Gain equation tests:")
-    @testset "Poisson equation" begin
+    @testset "Poisson equations" begin
         print("  Poisson equations")
         N = 5
         eq = ScalarPoissonEquation(x->x, N)
@@ -13,20 +13,20 @@
         print(".") 
         @test length(eq.gain) == N
         pos = rand(N)
-        testens=FPFEnsemble(pos,N,ScalarObservationData(pos,mean(pos)),GainDataSemigroup1d(zeros(Float64,N),ones(Float64,N)))
+        testens=FPFEnsemble(pos,N)
         Update!(eq, testens)
         print(".") 
         @test eq.positions == pos
         print(".")
         @test eq.H == pos
         print(".")
-        @test eq.mean_H == mean(pos)
+        @test eq.mean_H == StatsBase.mean(pos)
         print(".")
         eq.h = x->x^2
         Update!(eq, testens)
         @test eq.H == pos.^2
         print(".")
-        @test eq.mean_H == mean(pos.^2)
+        @test eq.mean_H == StatsBase.mean(pos.^2)
         println("DONE")
     end; #Poisson equation
 end; #testset gain equations
@@ -43,7 +43,7 @@ end; #testset gain equations
               -1.5151245392598531
                0.02565906919199346
                0.15161614796874012]
-        testens=FPFEnsemble(x_pf,6,ScalarObservationData(x_pf,mean(x_pf)),GainDataSemigroup1d(zeros(Float64,6),ones(Float64,6)))
+        testens=FPFEnsemble(x_pf,6)
         Update!(eq, testens)
         print(".")
         Solve!(eq, SemigroupMethod1d(0.1,0.01));

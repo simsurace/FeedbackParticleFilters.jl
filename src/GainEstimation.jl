@@ -3,8 +3,10 @@
 ################################
 
 abstract type GainEquation end
+function GainEquation(state_model::StateModel, obs_model::ObservationModel) end
+function GainEquation(state_model::StateModel, obs_model::ObservationModel, ensemble::FPFEnsemble) end
 
-abstract type PoissonEquation <: GainEquation end
+abstract type PoissonEquation <: GainEquation end 
 
 """
     ScalarPoissonEquation
@@ -26,14 +28,30 @@ mutable struct ScalarPoissonEquation <: PoissonEquation
     mean_H::Float64
     potential::Array{Float64,1}
     gain::Array{Float64,1}
+    ScalarPoissonEquation(h, positions, H, mean_H, potential, gain) = 
+        if length(positions) == length(H) == length(potential) == length(gain)
+            new(h, positions, H, mean_H, potential, gain)
+        else
+            error("ERROR: length mismatch")
+        end#if
 end
+    
 function ScalarPoissonEquation(h::Function, N::Int)
     ScalarPoissonEquation(x->x, randn(N), zeros(Float64,N), 0., ones(Float64,N), zeros(Float64,N))
 end
+    
 function ScalarPoissonEquation(h::Function, ensemble::FPFEnsemble)
     H = h.(ensemble.positions)
     N = length(H)
-    ScalarPoissonEquation(h, ensemble.positions, H, mean(H), ones(Float64,N), zeros(Float64,N))
+    ScalarPoissonEquation(h, ensemble.positions, H, StatsBase.mean(H), ones(Float64,N), zeros(Float64,N))
+end
+
+function GainEquation(state_model::ScalarDiffusionStateModel, obs_model::ScalarDiffusionObservationModel, N::Int)
+    ScalarPoissonEquation(obs_model.observation_function, N)
+end
+
+function GainEquation(state_model::ScalarDiffusionStateModel, obs_model::ScalarDiffusionObservationModel, ensemble::FPFEnsemble)
+    ScalarPoissonEquation(obs_model.observation_function, ensemble)
 end
 
 mutable struct VectorScalarPoissonEquation <: PoissonEquation
@@ -47,7 +65,7 @@ end
 function VectorScalarPoissonEquation(h::Function, ensemble::FPFEnsemble)
     H = h.(ensemble.positions)
     N = length(H)
-    VectorScalarPoissonEquation(h, ensemble.positions, H, mean(H), ones(Float64,N), zeros(Float64,N,N))
+    VectorScalarPoissonEquation(h, ensemble.positions, H, StatsBase.mean(H), ones(Float64,N), zeros(Float64,N,N))
 end
 
 mutable struct ScalarVectorPoissonEquation <: PoissonEquation
@@ -67,6 +85,9 @@ mutable struct VectorPoissonEquation <: PoissonEquation
     potential::Array{Float64,2}
     gain::Array{Float64,3}
 end
+
+
+
 
 
 #######################
@@ -101,13 +122,13 @@ function Update!(eq::GainEquation, ensemble::FPFEnsemble) end
 function Update!(eq::ScalarPoissonEquation, ensemble::FPFEnsemble)
     eq.positions = ensemble.positions
     broadcast!(eq.h, eq.H, eq.positions)
-    eq.mean_H = mean(eq.H)
+    eq.mean_H = StatsBase.mean(eq.H)
 end
 
 function Update!(eq::VectorScalarPoissonEquation, ensemble::FPFEnsemble)
     eq.positions = ensemble.positions
     broadcast!(eq.h, eq.H, eq.positions)
-    eq.mean_H = mean(eq.H)
+    eq.mean_H = StatsBase.mean(eq.H)
 end
 
 
@@ -137,11 +158,6 @@ struct SemigroupMethod1d <: SemigroupMethod
     delta::Float64
 end
 
-mutable struct GainDataSemigroup1d <: GainData{Float64,Float64}
-    gain::Array{Float64,1}
-    potential::Array{Float64,1}
-end;
-
 function Solve!(eq::ScalarPoissonEquation, method::SemigroupMethod1d) 
     N = length(eq.positions)
     H = copy(eq.H)
@@ -163,9 +179,9 @@ function Solve!(eq::ScalarPoissonEquation, method::SemigroupMethod1d)
     newpotential = copy(eq.potential)::Array{Float64,1}
     fluctuation = 1.
     while fluctuation > method.delta
-        mul!(newpotential, T, eq.potential)
+        LinearAlgebra.mul!(newpotential, T, eq.potential)
         broadcast!(+, newpotential, newpotential, H)
-        broadcast!(-, newpotential, newpotential, mean(newpotential))
+        broadcast!(-, newpotential, newpotential, StatsBase.mean(newpotential))
         fluctuation = maximum(abs.(newpotential-eq.potential))
         eq.potential = copy(newpotential)
     end

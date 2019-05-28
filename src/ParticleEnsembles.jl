@@ -1,7 +1,5 @@
 abstract type UnweightedParticleEnsemble{T} end;
 abstract type WeightedParticleEnsemble{T} end; #currently not being used
-abstract type ObservationData{T2} end;
-abstract type GainData{T1,T2} end;
 
 ########################################
 ### Concrete particle ensemble types ###
@@ -9,14 +7,23 @@ abstract type GainData{T1,T2} end;
 
 
 """
-    FPFEnsemble{T1,T2}
+    FPFEnsemble{T}
 
-Feedback particle filter ensemble state that keeps track of particle `positions` of type `T1`, observation data (whose structure varies depending on the observation model), and gain data (whose structure varies depending on the gain estimation method).
+Feedback particle filter ensemble state that keeps track of particle `positions` of type `T`, observation data (whose structure varies depending on the observation model), and gain data (whose structure varies depending on the gain estimation method).
 """
-mutable struct FPFEnsemble{T1,T2} <: UnweightedParticleEnsemble{T1}
-    positions::Array{T1,1}
+mutable struct FPFEnsemble{T} <: UnweightedParticleEnsemble{T}
+    positions::Array{T,1}
     size::Int64
-    obs_data::ObservationData{T2}
-    gain_data::GainData{T1,T2}
+    FPFEnsemble(positions::Array, size::Int) = if length(positions) != size
+                                        if length(positions) == 1
+                                            new{typeof(positions[1])}(fill(positions[1], size), size)
+                                        else
+                                            error("ERROR: number of particle positions does not equal ensemble size")
+                                        end
+                                   else
+                                        new{typeof(positions[1])}(positions, size)
+                                   end
 end
+        
+FPFEnsemble(distribution::Distributions.Sampleable, N::Int) = FPFEnsemble(rand(distribution, N), N)
 

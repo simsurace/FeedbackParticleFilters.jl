@@ -1,24 +1,34 @@
 module FeedbackParticleFilters
 
-using StatsBase
-using LinearAlgebra
+import StatsBase
+import LinearAlgebra
+import Distributions
 #using Distributed
 #using PyPlot
 
 include("ParticleEnsembles.jl")
 export
     UnweightedParticleEnsemble,
-    FPFEnsemble,
-    ObservationData,
-    GainData,
-    func
+    FPFEnsemble
+
+include("StateModels.jl")
+export
+    StateModel,
+    DiffusionStateModel,
+    ScalarDiffusionStateModel
 
 include("ObservationModels.jl")
 export
     ObservationModel,
-    DiffusionObservationModel1d,
-    ScalarObservationData,
-    PointprocessObservationModel
+    DiffusionObservationModel,
+    ScalarDiffusionObservationModel,
+    PointprocessObservationModel,
+    ScalarPointprocessObservationModel
+
+include("FilteringProblems.jl")
+export
+    FilteringProblem,
+    ContinuousTimeFilteringProblem
 
 include("GainEstimation.jl")
 export
