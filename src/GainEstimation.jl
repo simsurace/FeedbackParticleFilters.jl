@@ -153,6 +153,21 @@ function Update!(eq::VectorScalarPoissonEquation, ensemble::FPFEnsemble)
     eq.mean_H = StatsBase.mean(eq.H)
 end
 
+"""
+    FPFUpdater(filt_prob::ContinuousTimeFilteringProblem, method::GainEstimationMethod)
+
+Returns a function called `update!` that assimilates one observation by solving the gain estimation problem and then updating the particles.
+"""
+function FPFUpdater(filt_prob::ContinuousTimeFilteringProblem, method::GainEstimationMethod, dt::Float64)
+    function update!(ensemble::FPFEnsemble, eq::ScalarPoissonEquation, obs)
+        Update!(eq, ensemble)
+        Solve!(eq, method)
+        error = obs .- eq.mean_H * dt / 2 .- eq.H .* dt ./ 2
+        ApplyGain!(ensemble, eq, error)
+    end
+end
+        
+
 
 ########################
 ### Semigroup method ###

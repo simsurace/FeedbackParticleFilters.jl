@@ -7,6 +7,14 @@ Concrete types: DiffusionObservationModel, PointprocessObservationModel
 """
 abstract type ObservationModel end
 
+
+"""
+    Emitter(model::StateModel)
+
+Returns a function called `emit` that emits an observation.
+"""
+function Emitter(model::ObservationModel) end
+
 """
     DiffusionObservationModel(observation_function::Function, m::Int) <: ObservationModel
 
@@ -26,6 +34,12 @@ and V_t is a 1-dimensional Brownian motion process.
 """
 struct ScalarDiffusionObservationModel <: ObservationModel
     observation_function::Function
+end
+
+function Emitter(obs_model::ScalarDiffusionObservationModel, dt::Float64)
+    function emit(x::Float64)
+        obs_model.observation_function(x)*dt+sqrt(dt)*randn()
+    end
 end
 
 """

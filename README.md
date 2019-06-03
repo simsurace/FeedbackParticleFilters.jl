@@ -45,6 +45,13 @@ Solve!(eq, method)
 ```
 The gain at the particle locations is stored in `eq.gain`.
 These low-level building blocks can then be used to write custom numerical implementations.
+
+But the package also supports running full simulations as follows:
+```
+filter = FeedbackParticleFilter(filt_prob, method, 100);
+simulation = FPFSimulation(filter, 10, 0.01);
+run!(simulation)
+```
 The package also interfaces with powerful solvers from the `DifferentialEquationsjl` package in order to simulate the system and the filter.
 ```
 filter = FeedbackParticleFilter(filt_prob, method, 100)

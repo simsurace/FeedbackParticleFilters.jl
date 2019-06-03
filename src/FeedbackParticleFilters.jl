@@ -15,7 +15,8 @@ include("StateModels.jl")
 export
     StateModel,
     DiffusionStateModel,
-    ScalarDiffusionStateModel
+    ScalarDiffusionStateModel,
+    Propagator
 
 include("ObservationModels.jl")
 export
@@ -23,7 +24,8 @@ export
     DiffusionObservationModel,
     ScalarDiffusionObservationModel,
     PointprocessObservationModel,
-    ScalarPointprocessObservationModel
+    ScalarPointprocessObservationModel,
+    Emitter
 
 include("FilteringProblems.jl")
 export
@@ -47,6 +49,15 @@ export
 include("Propagation.jl")
 export
     ApplyGain!
+
+include("Filters.jl")
+export
+    Filter,
+    ContinuousTimeFilter,
+    FeedbackParticleFilter,
+    Simulation,
+    FPFSimulation,
+    run!
 
 
 end # module
