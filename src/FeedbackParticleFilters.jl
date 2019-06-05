@@ -43,7 +43,8 @@ export
     Update!,
     Solve!,
     GainEstimationMethod,
-        SemigroupMethod1d
+        SemigroupMethod1d,
+        RegularizedSemigroupMethod1d
 
 include("Propagation.jl")
 export
