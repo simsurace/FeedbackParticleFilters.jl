@@ -32,16 +32,22 @@ export
     FilteringProblem,
     ContinuousTimeFilteringProblem
 
-include("GainEstimation.jl")
+include("GainEquations.jl")
 export
     GainEquation,
         PoissonEquation,
             ScalarPoissonEquation,
             ScalarVectorPoissonEquation,
             VectorScalarPoissonEquation,
-            VectorPoissonEquation,
+            VectorPoissonEquation
+
+include("GainEstimation.jl")
+export
     Update!,
-    Solve!,
+    Solve!
+
+include("GainEstimationMethods.jl")
+export
     GainEstimationMethod,
         SemigroupMethod1d,
         RegularizedSemigroupMethod1d

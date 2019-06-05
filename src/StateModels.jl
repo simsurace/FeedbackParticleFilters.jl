@@ -24,20 +24,45 @@ function Propagator(model::StateModel) end
 
 A diffusion process hidden state model dX_t = f(X_t)dt + g(X_t)dW_t, where f is the `drift_function`, g is the `observation_function`, X_t is the `n`-dimensional hidden state at time t, and W_t is an `nprime`-dimensional Brownian motion process.
 """
-struct DiffusionStateModel <: StateModel
+abstract type DiffusionStateModel <: StateModel end
+
+struct ScalarDiffusionStateModel <: DiffusionStateModel
+    drift_function::Function
+    diffusion_function::Function
+    initial_distribution::Union{Float64, Distributions.Sampleable}
+    #calculus::StochasticCalculus
+    ScalarDiffusionStateModel(f::Function, g::Function, init::Union{Float64, Distributions.Sampleable}) = 
+        if hasmethod(f, Tuple{Float64}) && hasmethod(g, Tuple{Float64}) && typeof(f(0.)) == Float64 && typeof(g(0.)) == Float64
+            new(f, g, init)
+        else
+            error("Drift or diffusion function has wrong domain or codomain (must be Float64 in each case).")
+        end
+end
+
+struct VectorDiffusionStateModel <: DiffusionStateModel
     drift_function::Function
     diffusion_function::Function
     initial_distribution::Union{Array{Float64,1}, Distributions.Sampleable}
     n::Int
     nprime::Int
     #calculus::StochasticCalculus
+    VectorDiffusionStateModel(f::Function, g::Function, init::Union{Float64, Array{Float64,1}, Distributions.Sampleable}, n::Int, nprime::Int) = if n == nprime == 1 
+            ScalarDiffusionStateModel(f, g, init)
+        else
+            new(f, g, init, n, nprime)
+        end
 end
-
-struct ScalarDiffusionStateModel <: StateModel
-    drift_function::Function
-    diffusion_function::Function
-    initial_distribution::Union{Float64, Distributions.Sampleable}
-    #calculus::StochasticCalculus
+    
+function DiffusionStateModel(f::Function, g::Function, init::Union{Float64, Array{Float64,1}, Distributions.Sampleable}, n::Int, nprime::Int)
+    if n == nprime == 1
+        ScalarDiffusionStateModel(f, g, init)
+    else
+        VectorDiffusionStateModel(f, g, init, n, nprime)
+    end
+end
+        
+function DiffusionStateModel(f::Function, g::Function, init::Union{Float64, Array{Float64,1}, Distributions.Sampleable})
+    ScalarDiffusionStateModel(f, g, init)
 end
 
 function FPFEnsemble(state_model::ScalarDiffusionStateModel, N::Int)

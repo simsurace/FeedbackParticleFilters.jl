@@ -9,7 +9,7 @@ abstract type WeightedParticleEnsemble{T} end; #currently not being used
 """
     FPFEnsemble{T}
 
-Feedback particle filter ensemble state that keeps track of particle `positions` of type `T`, observation data (whose structure varies depending on the observation model), and gain data (whose structure varies depending on the gain estimation method).
+Feedback particle filter ensemble state that keeps track of particle `positions` of type `T` and the ensemble size.
 """
 mutable struct FPFEnsemble{T} <: UnweightedParticleEnsemble{T}
     positions::Array{T,1}

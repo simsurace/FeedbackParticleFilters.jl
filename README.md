@@ -59,7 +59,7 @@ To learn more about how to use this package, please check out some tutorials or 
 ## Tutorials
 
 There are various Jupyter notebooks that explore various key functions of the package:
-1. [Getting started tutorial](notebooks/Getting_started.ipynb)
+1. [Getting started](notebooks/Getting_started.ipynb)
 2. Gain estimation using the [semigroup method](notebooks/Gain_semigroup.ipynb)
 
 ## Documentation
