@@ -1,5 +1,6 @@
 # FeedbackParticleFilters.jl
 [![Latest](https://img.shields.io/badge/docs-latest-blue.svg)](http://simsurace.github.io/FeedbackParticleFilters.jl/latest)
+[![Build Status](https://travis-ci.org/simsurace/FeedbackParticleFilters.jl.svg?branch=master)](https://travis-ci.org/simsurace/FeedbackParticleFilters.jl)
 
 This package provides a versatile and efficient feedback particle filter implementation in Julia, with abstractions to flexibly construct, run, and analyze feedback particle filters for a variety of uni- and multivariate filtering problems with both diffusion and point process observations.
 
