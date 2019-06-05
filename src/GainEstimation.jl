@@ -185,15 +185,17 @@ Concrete methods: SemigroupMethod1d
 abstract type SemigroupMethod <: GainEstimationMethod end
 
 """
-    SemigroupMethod1d(epsilon, delta)
+    SemigroupMethod1d(epsilon, delta, max_iter(=100))
 
-One-dimensional semigroup method with Gaussian kernels of variance epsilon. 
-The fixed-point equation is iterated as long as the maximum change in the potential is larger than delta.
+One-dimensional semigroup method with Gaussian kernels of variance `epsilon`. 
+The fixed-point equation is iterated for a maximum of `max_iter` iterations as long as the maximum change in the potential is larger than `delta`.
 """
 struct SemigroupMethod1d <: SemigroupMethod
     epsilon::Float64
     delta::Float64
+    max_iter::Int
 end
+SemigroupMethod1d(epsilon::Float64, delta::Float64) = SemigroupMethod1d(epsilon, delta, 100)
 
 function Solve!(eq::ScalarPoissonEquation, method::SemigroupMethod1d) 
     N = length(eq.positions)
@@ -204,27 +206,38 @@ function Solve!(eq::ScalarPoissonEquation, method::SemigroupMethod1d)
     # compute T operator
     T = zeros(Float64, N, N)
     for i in 1:N
-        for j in i:N
+        T[i,i] = 1.0
+        for j in i+1:N
             T[i,j] = exp(-(eq.positions[i]-eq.positions[j])^2/(4*method.epsilon))
             T[j,i] = T[i,j]
         end
     end
     broadcast!(/, T, T, sqrt.(sum(T,dims=1) .* sum(T,dims=2)))
     broadcast!(/, T, T, sum(T,dims=2))
+    
+    # add noise to regularize T
+    for i in 1:N
+        T[i,i] -=  1E-3 * rand(Distributions.Uniform(0.9,1))
+    end
 
-    # solve fixed-point equation
+    # solve fixed-point equation for potential
     newpotential = copy(eq.potential)::Array{Float64,1}
     fluctuation = 1.
+    n = 1
     while fluctuation > method.delta
         LinearAlgebra.mul!(newpotential, T, eq.potential)
         broadcast!(+, newpotential, newpotential, H)
         broadcast!(-, newpotential, newpotential, StatsBase.mean(newpotential))
-        fluctuation = maximum(abs.(newpotential-eq.potential))
-        eq.potential = copy(newpotential)
+        fluctuation = maximum(abs.(newpotential - eq.potential))
+        eq.potential .= newpotential
+        n += 1
+        if n == method.max_iter
+            print("!")
+            break
+        end
     end
 
-    eq.gain = T * (eq.potential .* eq.positions) - (T*eq.potential) .* (T*eq.positions)
+    # compute gain from potential
+    eq.gain .= T * (eq.potential .* eq.positions) - (T*eq.potential) .* (T*eq.positions)
     broadcast!(/, eq.gain, eq.gain, 2*method.epsilon)
 end
-
-
