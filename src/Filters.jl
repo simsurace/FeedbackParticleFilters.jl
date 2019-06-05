@@ -37,13 +37,29 @@ function FPFSimulation(filter::FeedbackParticleFilter, n_time::Int, dt::Float64)
     FPFSimulation(n_time, dt, propagate!, emit, update!, state, observation, ensemble, eq)
 end
 
-function run!(simulation::FPFSimulation)
-    print("Starting simulation...")
+function run!(simulation::FPFSimulation, recordtype::DataType=Nothing)
+    print("Starting simulation")
+    if recordtype != Nothing
+        records = Array{recordtype,1}(undef, simulation.n_time)
+        commonfieldnames = intersect(fieldnames(recordtype),fieldnames(FPFSimulation))
+    end
     for i in 1:simulation.n_time
+        if i % 100 == 0
+            print(".")
+        end
         simulation.state = simulation.propagate!(simulation.state)
         simulation.observation = simulation.emit(simulation.state)
         simulation.propagate!(simulation.ensemble)
         simulation.update!(simulation.ensemble, simulation.eq, simulation.observation)
+        
+        #fill in record
+        if recordtype != Nothing
+            records[i] = recordtype([deepcopy(simulation.:($fieldname)) for fieldname in commonfieldnames]...)
+        end
+            
     end
     println("DONE.")
-end
+    if recordtype != Nothing
+        return records
+    end;
+end;

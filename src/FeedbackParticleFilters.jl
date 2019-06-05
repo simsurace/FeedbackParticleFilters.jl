@@ -43,8 +43,7 @@ export
     Update!,
     Solve!,
     GainEstimationMethod,
-        SemigroupMethod1d,
-        GainDataSemigroup1d
+        SemigroupMethod1d
 
 include("Propagation.jl")
 export
@@ -58,6 +57,11 @@ export
     Simulation,
     FPFSimulation,
     run!
+
+include("Utilities.jl")
+export
+    MSE,
+    RelativeMSE
 
 
 end # module
