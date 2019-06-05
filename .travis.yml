@@ -11,6 +11,7 @@ matrix:
     - julia: nightly
 notifications:
 email: false    
+codecov: true
 
 after_success:
 - julia -e 'cd(Pkg.dir("FeedbackParticleFilters")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
