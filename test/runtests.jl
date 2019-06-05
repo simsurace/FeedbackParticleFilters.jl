@@ -1,3 +1,5 @@
 # run all tests
-include("build.jl")
+using FeedbackParticleFilters
+using StatsBase
+using Test
 include("test_GainEstimation.jl")
