@@ -6,6 +6,8 @@ This package provides a versatile and efficient feedback particle filter impleme
 In particular, FeedbackParticleFilters implements:
 * Types for hidden state and observation models: diffusions, Poisson processes, etc.
 * A variety of gain estimation methods
+* Automatic filter deployment and simulation of the state and filtering equations
+* Storing of intermediate (trajectory) data from simulation
 * An interface to the powerful solvers from the `DifferentialEquations` package
 
 ## Installation
@@ -40,28 +42,23 @@ The following generates a Poisson equation for the gain using the ensemble above
 The equation is solved using the semigroup gain estimation method.
 ```
 eq = GainEquation(state_model, obs_model, ensemble)
-method = SemigroupMethod1d(0.1,0.01)
+method = SemigroupMethod1d(1E-1,1E-2)
 Solve!(eq, method)
 ```
 The gain at the particle locations is stored in `eq.gain`.
 These low-level building blocks can then be used to write custom numerical implementations.
-
-But the package also supports running full simulations as follows:
+The package also comes with methods to automatically simulate given filtering problem:
 ```
 filter = FeedbackParticleFilter(filt_prob, method, 100);
-simulation = FPFSimulation(filter, 10, 0.01);
+simulation = FPFSimulation(filter, 10000, 0.01);
 run!(simulation)
 ```
-The package also interfaces with powerful solvers from the `DifferentialEquationsjl` package in order to simulate the system and the filter.
-```
-filter = FeedbackParticleFilter(filt_prob, method, 100)
-using DifferentialEquations
-trajectories = Simulate(filt_prob, filter, EM(), dt=0.01) # solve SDEs using the Euler-Maruyama method
-```
+To learn more about how to use this package, please check out some tutorials or the documentation linked below.
+
 ## Tutorials
 
 There are various Jupyter notebooks that explore various key functions of the package:
-1. Basic [tutorial](notebooks/Basic_tutorial.ipynb)
+1. [Getting started tutorial](notebooks/Getting_started.ipynb)
 2. Gain estimation using the [semigroup method](notebooks/Gain_semigroup.ipynb)
 
 ## Documentation
