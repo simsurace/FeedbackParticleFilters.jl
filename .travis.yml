@@ -3,7 +3,7 @@ julia:
   - nightly
   - 1.1
   - 1.0.3
-
-using Pkg
-Pkg.build() # Pkg.build(; verbose = true) for Julia 1.1 and up
-Pkg.test(coverage=true)
+script:
+  - using Pkg
+  - Pkg.build() # Pkg.build(; verbose = true) for Julia 1.1 and up
+  - Pkg.test(coverage=true)
