@@ -1,6 +1,7 @@
 # FeedbackParticleFilters.jl
 [![Latest](https://img.shields.io/badge/docs-latest-blue.svg)](http://simsurace.github.io/FeedbackParticleFilters.jl/latest)
 [![Build Status](https://travis-ci.org/simsurace/FeedbackParticleFilters.jl.svg?branch=master)](https://travis-ci.org/simsurace/FeedbackParticleFilters.jl)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![codecov](https://codecov.io/gh/simsurace/FeedbackParticleFilters.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/simsurace/FeedbackParticleFilters.jl)
 
 
