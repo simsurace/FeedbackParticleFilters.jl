@@ -9,7 +9,7 @@ In particular, FeedbackParticleFilters implements:
 * A variety of gain estimation methods
 * Automatic filter deployment and simulation of the state and filtering equations
 * Storing of intermediate (trajectory) data from simulation
-* An interface to the powerful solvers from the `DifferentialEquations` package
+* An interface to the powerful solvers from the [DifferentialEquations](https://github.com/JuliaDiffEq/DifferentialEquations.jl) package 
 
 ## Installation
 
