@@ -33,7 +33,7 @@ using Distributions
 Set up a basic one-dimensional linear-Gaussian continuous-time filtering problem:
 ```
 state_model = ScalarDiffusionStateModel(x->-x, x->sqrt(2.), Normal())
-obs_model = ScalarDiffusionObservationModel(x->x, x->1)
+obs_model = ScalarDiffusionObservationModel(x->x)
 
 filt_prob = ContinuousTimeFilteringProblem(state_model, obs_model)
 ```

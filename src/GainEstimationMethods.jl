@@ -67,7 +67,7 @@ function Solve!(eq::ScalarPoissonEquation, method::SemigroupMethod1d)
 end
 
 """
-    SemigroupMethod1d(epsilon, delta, max_iter(=100), lambda(=1E-3))
+    RegularizedSemigroupMethod1d(epsilon, delta, max_iter(=100), lambda(=1E-3))
 
 One-dimensional semigroup method with Gaussian kernels of variance `epsilon`. 
 The fixed-point equation is iterated for a maximum of `max_iter` iterations as long as the maximum change in the potential is larger than `delta`.
