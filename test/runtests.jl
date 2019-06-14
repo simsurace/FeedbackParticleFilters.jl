@@ -3,6 +3,8 @@
 using FeedbackParticleFilters, Test, SafeTestsets
 
 println("Starting tests")
+@safetestset "Basic abstractions" begin include("test_BasicAbstractions.jl") end
+@safetestset "Basic methods" begin include("test_BasicMethods.jl") end
 @safetestset "Particle ensembles" begin include("test_ParticleEnsembles.jl") end
 @safetestset "State models" begin include("test_StateModels.jl") end
 @safetestset "Observation models" begin include("test_ObservationModels.jl") end
