@@ -6,6 +6,21 @@ import Distributions
 #using Distributed
 #using PyPlot
 
+include("BasicAbstractions.jl")
+export
+    AbstractHiddenState,
+    VectorHiddenState,
+    AbstractFilterRepresentation,
+    ParticleRepresentation,
+    UnweightedParticleRepresentation,
+    AbstractGainEquation,
+    EmptyGainEquation
+
+include("BasicMethods.jl")
+export
+    eltype,
+    Map
+
 include("ParticleEnsembles.jl")
 export
     UnweightedParticleEnsemble,
