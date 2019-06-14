@@ -6,9 +6,9 @@
 
 
 
-This package provides a versatile and efficient feedback particle filter implementation in Julia, with abstractions to flexibly construct, run, and analyze feedback particle filters for a variety of uni- and multivariate filtering problems with both diffusion and point process observations.
+This package's aim is to provide a versatile and efficient feedback particle filter implementation in Julia, with abstractions to flexibly construct, run, and analyze feedback particle filters for a variety of uni- and multivariate filtering problems with both diffusion and point process observations.
 
-In particular, FeedbackParticleFilters implements:
+In particular, the following features are planned to be implemented in FeedbackParticleFilters:
 * Types for hidden state and observation models: diffusions, Poisson processes, etc.
 * A variety of gain estimation methods
 * Automatic filter deployment and simulation of the state and filtering equations
@@ -69,3 +69,8 @@ There are various Jupyter notebooks that explore various key functions of the pa
 ## Documentation
 
 https://simsurace.github.io/FeedbackParticleFilters.jl/latest
+
+## Acknowledgements
+
+This package was developed as part of academic research at Department of Physiology, University of Bern, Switzerland.
+The research was funded by the Swiss National Science Foundation.
