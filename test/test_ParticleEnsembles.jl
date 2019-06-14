@@ -1,10 +1,10 @@
-using FeedbackParticleFilters, Test, StatsBase, Distributions
+using FeedbackParticleFilters, StatsBase, Distributions
 
 println("Testing particle ensembles:")
 @testset "FPFEnsemble" begin
     print("  FPFEnsemble")
     print(".")
-    @test FPFEnsemble <: UnweightedParticleEnsemble
+    @test FPFEnsemble <: UnweightedParticleRepresentation
     print(".")
     @test_throws ErrorException FPFEnsemble([1,2], 3)
     print(".")
