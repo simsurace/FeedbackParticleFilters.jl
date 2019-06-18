@@ -1,0 +1,6 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+FeedbackParticleFilters = "f4440bb6-80da-11e9-1db0-85cc1897f664"
+
+[compat]
+Documenter = "~0.21"
