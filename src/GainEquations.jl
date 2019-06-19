@@ -90,18 +90,18 @@ function GainEquation(filtering_problem::ContinuousTimeFilteringProblem, ensembl
 end
     
 """
-    GainEquation(state_model::StateModel, obs_model::ObservationModel, N::Int)
+    GainEquation(state_model::HiddenStateModel, obs_model::ObservationModel, N::Int)
 
 This will automatically construct a GainEquation object for the specified models and `N` particles.
 """
-function GainEquation(state_model::StateModel, obs_model::ObservationModel, N::Int) end
+function GainEquation(state_model::HiddenStateModel, obs_model::ObservationModel, N::Int) end
 
 """
     GainEquation(state_model::StateModel, obs_model::ObservationModel, ensemble::FPFEnsemble)
 
 This will automatically construct a GainEquation object for the specified models and the concrete ensemble.
 """
-function GainEquation(state_model::StateModel, obs_model::ObservationModel, ensemble::FPFEnsemble) end
+function GainEquation(state_model::HiddenStateModel, obs_model::ObservationModel, ensemble::FPFEnsemble) end
     
 function GainEquation(state_model::ScalarDiffusionStateModel, obs_model::ScalarDiffusionObservationModel, N::Int)
     ScalarPoissonEquation(obs_model.observation_function, N)

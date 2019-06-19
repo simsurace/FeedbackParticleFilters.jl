@@ -10,6 +10,12 @@ include("BasicAbstractions.jl")
 export
     AbstractHiddenState,
     VectorHiddenState,
+    AbstractModel,
+    HiddenStateModel,
+    ObservationModel,
+    ContinuousTimeHiddenStateModel,
+    ContinuousTimeObservationModel,
+    AbstractFilteringProblem,
     AbstractFilterRepresentation,
     ParticleRepresentation,
     UnweightedParticleRepresentation,
@@ -28,14 +34,12 @@ export
 
 include("StateModels.jl")
 export
-    StateModel,
     DiffusionStateModel,
     ScalarDiffusionStateModel,
     Propagator
 
 include("ObservationModels.jl")
 export
-    ObservationModel,
     DiffusionObservationModel,
     ScalarDiffusionObservationModel,
     PointprocessObservationModel,

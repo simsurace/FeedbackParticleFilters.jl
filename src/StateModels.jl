@@ -1,32 +1,18 @@
-#abstract type StochasticCalculus end
-#struct ItoCalculus <: StochasticCalculus end
-#struct StratonovichCalculus <: StochasticCalculus end
-#using Distributions
-
-"""
-    StateModel
-
-Abstract type for the hidden state model of the filtering problem.
-
-Concrete types: DiffusionStateModel, ScalarDiffusionStateModel
-"""
-abstract type StateModel end
-
 """
     Propagator(model::StateModel)
 
 Returns a function called `propagate!` that propagates the state model by one time step.
 """
-function Propagator(model::StateModel) end
+function Propagator(model::HiddenStateModel) end
 
 """
     DiffusionStateModel(drift_function::Function, diffusion_function::Function, n::Int, nprime::Int) <: ObservationModel
 
 A diffusion process hidden state model dX_t = f(X_t)dt + g(X_t)dW_t, where f is the `drift_function`, g is the `observation_function`, X_t is the `n`-dimensional hidden state at time t, and W_t is an `nprime`-dimensional Brownian motion process.
 """
-abstract type DiffusionStateModel <: StateModel end
+abstract type DiffusionStateModel{S} <: HiddenStateModel{S} end
 
-struct ScalarDiffusionStateModel <: DiffusionStateModel
+struct ScalarDiffusionStateModel <: DiffusionStateModel{Float64}
     drift_function::Function
     diffusion_function::Function
     initial_distribution::Union{Float64, Distributions.Sampleable}
@@ -39,7 +25,7 @@ struct ScalarDiffusionStateModel <: DiffusionStateModel
         end
 end
 
-struct VectorDiffusionStateModel <: DiffusionStateModel
+struct VectorDiffusionStateModel <: DiffusionStateModel{Vector{Float64}}
     drift_function::Function
     diffusion_function::Function
     initial_distribution::Union{Array{Float64,1}, Distributions.Sampleable}

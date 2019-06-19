@@ -4,7 +4,7 @@ println("Testing hidden state models:")
 @testset "Scalar diffusion model" begin
     print("  Scalar diffusion model")
     print(".")
-    @test ScalarDiffusionStateModel <: DiffusionStateModel <: StateModel
+    @test ScalarDiffusionStateModel <: DiffusionStateModel <: HiddenStateModel
     f(x::Float64) = x
     g(x::Float64) = 1.
     print(".")

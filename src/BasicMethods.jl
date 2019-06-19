@@ -3,7 +3,7 @@
 
 Extract S.
 """
-function Base.eltype(filter_rep::T) where T<:AbstractFilterRepresentation{S} where S <: AbstractHiddenState
+function Base.eltype(filter_rep::T) where T<:AbstractFilterRepresentation{S} where S
     S
 end
 

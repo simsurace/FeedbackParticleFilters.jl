@@ -18,6 +18,28 @@ println("Testing basic abstractions:")
     println("DONE.")
 end; #Hidden state
 
+@testset "Models" begin
+    print("  Models")
+    print(".")
+    @test HiddenStateModel{Float64} <: AbstractModel{Float64}
+    struct StMod{T} <: HiddenStateModel{T} end
+    struct ObsMod{S, T} <: ObservationModel{S, T} end
+    struct FiltProb{S, T, M1, M2} <: AbstractFilteringProblem{S, T}
+        state_model::M1
+        obs_model::M2
+        FiltProb(mod1::HiddenStateModel{S}, mod2::ObservationModel{S,T}) where {S, T} = new{S, T, typeof(mod1), typeof(mod2)}(mod1, mod2)
+    end
+    state_model = StMod{Float64}();
+    obs_model = ObsMod{Float64, Float64}();
+    filt_prob = FiltProb(state_model, obs_model)
+    print(".")
+    @test isa(filt_prob, AbstractFilteringProblem{Float64,Float64})
+    obs_model = ObsMod{Int, Float64}();
+    print(".")
+    @test_throws MethodError FilteringProblem(state_model, obs_model)
+    println("DONE.")
+end; #Models
+
 @testset "Filter representations" begin
     print("  Filter representations")
     print(".")

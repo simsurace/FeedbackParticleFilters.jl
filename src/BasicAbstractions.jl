@@ -1,14 +1,12 @@
-#############
-### Types ###
-#############
-
-
 """
     AbstractHiddenState = Union{Number, AbstractVector{T}
 
 Abstract type for the state space of the hidden state.
 """
 AbstractHiddenState = Union{Number, AbstractVector{T} where T<:Number}
+
+
+
 
 """
     VectorHiddenState = Union{Float64, AbstractVector{T} where T<:Float64}
@@ -18,30 +16,107 @@ This excludes points from a manifold, for example.
 """
 VectorHiddenState = Union{Float64, AbstractVector{T} where T<:Float64}
 
-#abstract type AbstractParameter <: Union{Number, AbstractVector{T} where T<:Number} end;
+
 
 """
-    AbstractFilterRepresentation{T<:AbstractHiddenState}
+    AbstractModel{T}
 
-Abstract type for representation of the conditional distribution over the hidden state.
+Abstract type for any model over states of type `T`.
 """
-abstract type AbstractFilterRepresentation{T<:AbstractHiddenState} end;
+abstract type AbstractModel{T} end
 
-#abstract type ParametricFilterRepresentation{T<:AbstractHiddenState, S<:AbstractParameter, P<:Union{S, AbstractVector{S}}} <: AbstractFilterRepresentation end
+
+
 
 """
-    ParticleRepresentation{T<:AbstractHiddenState}
+    HiddenStateModel{T} <: AbstractModel{T}
+
+Abstract type for any model of the hidden state of type `T`.
+"""
+abstract type HiddenStateModel{T} <: AbstractModel{T} end
+
+
+
+
+"""
+    ObservationModel{S, T} <: AbstractModel{T}
+
+Abstract type for any model of observations of type `T` and hidden states of type `S`.
+"""
+abstract type ObservationModel{S, T} <: AbstractModel{T} end
+
+
+
+
+"""
+    ContinuousTimeHiddenStateModel{T} <: HiddenStateModel{T} <: AbstractModel{T}
+
+Abstract type for any continuous-time model of the hidden state of type `T`.
+"""
+abstract type ContinuousTimeHiddenStateModel{T} <: HiddenStateModel{T} end
+
+
+
+
+"""
+    ContinuousTimeObservationModel{S, T} <: ObservationModel{S, T} <: AbstractModel{T}
+
+Abstract type for any continuous-time model of the observations of type `T` and hidden states of type `S`.
+"""
+abstract type ContinuousTimeObservationModel{S, T} <: ObservationModel{T, S} end
+
+
+
+
+"""
+    AbstractFilteringProblem{mod1<:HiddenStateModel{S} where S, mod2<:ObservationModel{T, S} where {T, S}}
+
+Abstract type for a filtering problem for observations of type `T` and hidden states of type `S`.
+"""
+abstract type AbstractFilteringProblem{S, T} end
+
+
+
+
+"""
+    AbstractFilterRepresentation{S}
+
+Abstract type for representation of the conditional distribution over the hidden state of type `S`.
+"""
+abstract type AbstractFilterRepresentation{S} end;
+
+
+
+
+"""
+    ParticleRepresentation{S} <: AbstractFilterRepresentation{S}
 
 Abstract type for the representation of the conditional distribution over the hidden state by particles (samples), weighted or unweighted.
 """
-abstract type ParticleRepresentation{T<:AbstractHiddenState} <: AbstractFilterRepresentation{T} end
+abstract type ParticleRepresentation{S} <: AbstractFilterRepresentation{S} end
+
+
+
 
 """
-    UnweightedParticleRepresentation{T<:AbstractHiddenState}
+    UnweightedParticleRepresentation{S} <: ParticleRepresentation{S} <: AbstractFilterRepresentation{S}
 
 Abstract type for the representation of the conditional distribution over the hidden state by unweighted particles (samples).
 """
-abstract type UnweightedParticleRepresentation{T<:AbstractHiddenState} <: ParticleRepresentation{T} end
+abstract type UnweightedParticleRepresentation{S} <: ParticleRepresentation{S} end
+
+
+
+
+"""
+    UnweightedParticleRepresentation{S} <: ParticleRepresentation{S} <: AbstractFilterRepresentation{S}
+
+Abstract type for the representation of the conditional distribution over the hidden state by unweighted particles (samples).
+"""
+#abstract type AbstractFilter{P<:AbstractFilteringProblem{S, T}, R<:AbstractFilterRepresentation{S}} where {S, T} end
+
+
+
 
 """
     AbstractGainEquation{T<:AbstractHiddenState}
@@ -49,6 +124,9 @@ abstract type UnweightedParticleRepresentation{T<:AbstractHiddenState} <: Partic
 Abstract type for an equation that determines the gain (vector field).
 """
 abstract type AbstractGainEquation{T<:AbstractHiddenState} end;
+
+
+
 
 """
     EmptyGainEquation{T<:AbstractHiddenState}
