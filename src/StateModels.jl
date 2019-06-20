@@ -1,5 +1,5 @@
 """
-    Propagator(model::StateModel)
+    Propagator(model::HiddenStateModel)
 
 Returns a function called `propagate!` that propagates the state model by one time step.
 """
@@ -10,7 +10,7 @@ function Propagator(model::HiddenStateModel) end
 
 A diffusion process hidden state model dX_t = f(X_t)dt + g(X_t)dW_t, where f is the `drift_function`, g is the `observation_function`, X_t is the `n`-dimensional hidden state at time t, and W_t is an `nprime`-dimensional Brownian motion process.
 """
-abstract type DiffusionStateModel{S} <: HiddenStateModel{S} end
+abstract type DiffusionStateModel{S} <: ContinuousTimeHiddenStateModel{S} end
 
 struct ScalarDiffusionStateModel <: DiffusionStateModel{Float64}
     drift_function::Function
@@ -70,4 +70,66 @@ function Propagator(state_model::ScalarDiffusionStateModel, dt::Float64)
         end#for
     end
     return propagate!
+end
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+
+                
+                
+                
+                
+                
+                
+                
+"""
+    ContinuousTimeMarkovChain(RATE_MATRIX, INITIAL_PROBABILITY)
+
+A continuous time Markov chain.
+"""
+struct ContinuousTimeMarkovChain <: ContinuousTimeHiddenStateModel{Int}
+    RATE_MATRIX::Matrix{<:Number}
+    INITIAL_PROBABILITY::Vector{<:Number}
+    function ContinuousTimeMarkovChain(A::Matrix{<:Number}, p0::Vector{<:Number})
+        n = length(p0)
+        if size(A) == (n,n)
+            if sum(p0) == one(eltype(A))
+                if sum(A, dims=1)[1,:] == zeros(Int,n)
+                    new(A, p0)
+                else
+                    error("ContinuousTimeMarkovChain specification error: columns of RATE_MATRIX have to sum to zero.")
+                end
+            else
+                error("ContinuousTimeMarkovChain specification error: INITIAL_PROBABILITY has to sum to one.")
+            end
+        else
+            error("ContinuousTimeMarkovChain specification error: INITIAL_PROBABILITY and RATE_MATRIX have inconsistent sizes.")
+        end
+    end
+end
+                                
+                                
+                                
+                                
+                                
+"""
+    ContinuousTimeMarkovChain(RATE_MATRIX)
+
+A continuous time Markov chain with uniform initial probabilities.
+"""
+function ContinuousTimeMarkovChain(A::Matrix{<:Number})
+    n = size(A)[1]
+    if size(A) == (n,n)
+        if sum(A, dims=1)[1,:] == zeros(Int,n)
+            ContinuousTimeMarkovChain(A, fill(1/n,n))
+        else
+            error("ContinuousTimeMarkovChain specification error: columns of RATE_MATRIX have to sum to zero.")
+        end
+    end
 end

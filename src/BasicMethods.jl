@@ -7,6 +7,7 @@ function Base.eltype(filter_rep::T) where T<:AbstractFilterRepresentation{S} whe
     S
 end
 
+
 """
     Map(f::T, A::AbstractArray) where T<:Function
 
@@ -15,6 +16,7 @@ Same as `Base.map`.
 function Map(f::T, A::AbstractArray) where T<:Function 
     map(f, A)
 end
+
 
 """
     Map(F::NTuple{N, Function}, x::T) where {N, T<:Number}
@@ -25,6 +27,7 @@ function Map(F::NTuple{N, Function}, x::T) where {N, T<:Number}
     [f(x) for f in F]
 end;
 
+
 """
     Map(F::AbstractArray{Function}, x::T) where {N, T<:Number} 
 
@@ -34,6 +37,7 @@ function Map(F::AbstractArray{Function}, x::T) where {N, T<:Number}
     [f(x) for f in F]
 end;
 
+
 """
     Map(F::AbstractArray{U}, x::T) where {N, T<:Number, U<:Function} 
 
@@ -42,6 +46,7 @@ Output an array with the results of applying each f in F to x.
 function Map(F::AbstractArray{U}, x::T) where {N, T<:Number, U<:Function}
     [f(x) for f in F]
 end;
+
 
 """
     Map(F::NTuple{N, Function}, A::AbstractArray; output_shape=2) where N
@@ -65,6 +70,13 @@ function Map(F::NTuple{N, Function}, A::AbstractArray; output_shape=2) where N
         error("ERROR: Invalid output_shape parameter. Must be either 1 or 2.") 
     end
 end;
+                
+
+                
+
+                
+                
+                
                 
 """
     Map(F::AbstractArray{T}, A::AbstractArray; output_shape=2) where {N, T<:Function}
@@ -94,6 +106,8 @@ function Map(F::AbstractArray{T}, A::AbstractArray; output_shape=2) where {N, T<
 end;
 
  
+                                
+                                
 """
     Map(f::U, ensemble::T) where {U<:Function, T<:UnweightedParticleRepresentation{S}} where S<:AbstractHiddenState
 
@@ -107,6 +121,13 @@ function Map(f::U, ensemble::T) where {U<:Function, T<:UnweightedParticleReprese
 end;
                                 
 
+                                
+                                
+                                
+                                
+                                
+                                
+                                
 """
     Map(F::NTuple{N, U}, ensemble::T) where {N, U<:Function, T<:UnweightedParticleRepresentation{S}} where S<:AbstractHiddenState
 

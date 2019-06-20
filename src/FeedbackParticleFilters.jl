@@ -15,7 +15,9 @@ export
     ObservationModel,
     ContinuousTimeHiddenStateModel,
     ContinuousTimeObservationModel,
+    AbstractProblem,
     AbstractFilteringProblem,
+    ContinuousTimeFilteringProblem,
     AbstractFilterRepresentation,
     ParticleRepresentation,
     UnweightedParticleRepresentation,
@@ -68,8 +70,11 @@ export
 include("GainEstimationMethods.jl")
 export
     GainEstimationMethod,
-        SemigroupMethod1d,
-        RegularizedSemigroupMethod1d
+        SemigroupMethod,
+            SemigroupMethod1d,
+            RegularizedSemigroupMethod1d,
+        EmpiricalRiskMinimizationMethod,
+            DifferentialRKHSMethod1d
 
 include("Propagation.jl")
 export

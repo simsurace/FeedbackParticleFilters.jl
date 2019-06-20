@@ -82,3 +82,34 @@ end #testset 1d semigroup gain estimation
                                          0.16644355667591126])) < 1E-2
         println("DONE.")
 end #testset 1d regularized semigroup gain estimation
+
+@testset "1d differential loss RKHS gain estimation" begin
+        print("  1d differential loss RKHS method")
+        N = 6
+        eq = ScalarPoissonEquation(x->x, randn(N), zeros(Float64,N), 0., ones(Float64,N), zeros(Float64,N))
+        x_pf=[-2.422480820086937
+              -0.592332203303167
+              -2.017301296096984
+              -1.5151245392598531
+               0.02565906919199346
+               0.15161614796874012]
+        testens=FPFEnsemble(x_pf,6)
+        Update!(eq, testens)
+        Solve!(eq, DifferentialRKHSMethod1d(1E1, 1E-6));
+        print(".")
+        @test eq.gain ≈ [ 4.724496383371694e-6 
+                          8.435238726186634e-5 
+                          3.108281028937963e-5 
+                          6.950864704069416e-5 
+                          2.046560326376124e-5 
+                          2.7664314229539685e-7 ]
+        print(".")
+        @test eq.potential ≈ [ 0.0006577332347096013
+                               0.0007697147272234129
+                               0.0006645966179017011
+                               0.0006900395199492173
+                               0.0008053043585044234
+                               0.0008066328089964521 ]
+        println("DONE.")
+end #testset 1d differential loss RKHS gain estimation
+

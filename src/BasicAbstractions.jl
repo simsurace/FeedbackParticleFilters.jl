@@ -69,11 +69,31 @@ abstract type ContinuousTimeObservationModel{S, T} <: ObservationModel{T, S} end
 
 
 """
-    AbstractFilteringProblem{mod1<:HiddenStateModel{S} where S, mod2<:ObservationModel{T, S} where {T, S}}
+    AbstractProblem{S, T}
+
+Abstract type for a problem for observations of type `T` and hidden states of type `S`.
+"""
+abstract type AbstractProblem{S, T, M1<:HiddenStateModel, M2<:ObservationModel} end
+
+
+
+
+"""
+    AbstractFilteringProblem{S, T, M1<:HiddenStateModel{S}, M2<:ObservationModel{S,T}}
 
 Abstract type for a filtering problem for observations of type `T` and hidden states of type `S`.
 """
-abstract type AbstractFilteringProblem{S, T} end
+const AbstractFilteringProblem = AbstractProblem{S, T, <:HiddenStateModel{S}, <:ObservationModel{S, T}} where {S,T}
+
+
+
+
+"""
+    ContinuousTimeFilteringProblem{S, T, M1<:ContinuousTimeHiddenStateModel{S}, M2<:ContinuousTimeObservationModel{S,T}}
+
+Abstract type for a filtering problem in continuous time for observations of type `T` and hidden states of type `S`.
+"""
+const ContinuousTimeFilteringProblem = AbstractFilteringProblem{S, T, <:ContinuousTimeHiddenStateModel{S}, <:ContinuousTimeObservationModel{S, T}} where {S,T}
 
 
 
