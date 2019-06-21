@@ -5,13 +5,22 @@ Returns a function called `propagate!` that propagates the state model by one ti
 """
 function Propagator(model::HiddenStateModel) end
 
-"""
+@doc raw"""
     DiffusionStateModel(drift_function::Function, diffusion_function::Function, n::Int, nprime::Int) <: ObservationModel
 
-A diffusion process hidden state model dX_t = f(X_t)dt + g(X_t)dW_t, where f is the `drift_function`, g is the `observation_function`, X_t is the `n`-dimensional hidden state at time t, and W_t is an `nprime`-dimensional Brownian motion process.
+A diffusion process hidden state model ``dX_t = f(X_t)dt + g(X_t)dW_t``, where f is the `drift_function`, g is the `observation_function`, X_t is the `n`-dimensional hidden state at time t, and W_t is an `nprime`-dimensional Brownian motion process.
 """
 abstract type DiffusionStateModel{S} <: ContinuousTimeHiddenStateModel{S} end
 
+@doc raw"""
+Here's some inline maths: ``\sqrt[n]{1 + x + x^2 + \ldots}``.
+
+Here's an equation:
+
+``\frac{n!}{k!(n - k)!} = \binom{n}{k}``
+
+This is the binomial coefficient.
+"""
 struct ScalarDiffusionStateModel <: DiffusionStateModel{Float64}
     drift_function::Function
     diffusion_function::Function

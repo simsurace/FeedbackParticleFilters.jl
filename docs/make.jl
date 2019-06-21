@@ -1,4 +1,4 @@
-push!(LOAD_PATH,"./src/")
+push!(LOAD_PATH,"/home/simone/Documents/uni/postdoc/projects/FeedbackParticleFilters.jl/")
 using Documenter, FeedbackParticleFilters
 
 makedocs(
@@ -9,10 +9,12 @@ makedocs(
     authors = "Simone Carlo Surace",
     pages = Any[ # Compat: `Any` for 0.4 compat
         "Home" => "index.md",
-        "Manual" => Any[
-             "getting_started.md",
+        "Getting started" => "getting_started.md",
+        "Background" => Any[
              "filtering.md",
              "fpf.md",
+        ],
+        "Manual" => Any[
              "hidden.md",
              "observation.md",
              "gainest.md",
@@ -30,3 +32,6 @@ makedocs(
     # deps = nothing,
     # deps   = Deps.pip("mkdocs", "python-markdown-math"),
 #)
+deploydocs(
+    repo = "github.com/simsurace/FeedbackParticleFilters.jl.git",
+)
