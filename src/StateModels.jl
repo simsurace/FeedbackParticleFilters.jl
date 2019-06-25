@@ -5,12 +5,18 @@ Returns a function called `propagate!` that propagates the state model by one ti
 """
 function Propagator(model::HiddenStateModel) end
 
+
+
+
 @doc raw"""
     DiffusionStateModel(drift_function::Function, diffusion_function::Function, n::Int, nprime::Int) <: ObservationModel
 
 A diffusion process hidden state model ``dX_t = f(X_t)dt + g(X_t)dW_t``, where f is the `drift_function`, g is the `observation_function`, X_t is the `n`-dimensional hidden state at time t, and W_t is an `nprime`-dimensional Brownian motion process.
 """
 abstract type DiffusionStateModel{S} <: ContinuousTimeHiddenStateModel{S} end
+
+
+
 
 @doc raw"""
 Here's some inline maths: ``\sqrt[n]{1 + x + x^2 + \ldots}``.
@@ -33,7 +39,15 @@ struct ScalarDiffusionStateModel <: DiffusionStateModel{Float64}
             error("Drift or diffusion function has wrong domain or codomain (must be Float64 in each case).")
         end
 end
+    
+Base.show(io::IO, model::ScalarDiffusionStateModel) = print(io, "Scalar diffusion process model")
 
+    
+    
+    
+    
+    
+    
 struct VectorDiffusionStateModel <: DiffusionStateModel{Vector{Float64}}
     drift_function::Function
     diffusion_function::Function
@@ -48,6 +62,12 @@ struct VectorDiffusionStateModel <: DiffusionStateModel{Vector{Float64}}
         end
 end
     
+        
+        
+        
+        
+        
+        
 function DiffusionStateModel(f::Function, g::Function, init::Union{Float64, Array{Float64,1}, Distributions.Sampleable}, n::Int, nprime::Int)
     if n == nprime == 1
         ScalarDiffusionStateModel(f, g, init)
@@ -56,10 +76,18 @@ function DiffusionStateModel(f::Function, g::Function, init::Union{Float64, Arra
     end
 end
         
+            
+            
 function DiffusionStateModel(f::Function, g::Function, init::Union{Float64, Array{Float64,1}, Distributions.Sampleable})
     ScalarDiffusionStateModel(f, g, init)
 end
 
+            
+            
+            
+            
+            
+            
 function FPFEnsemble(state_model::ScalarDiffusionStateModel, N::Int)
     x0 = state_model.initial_distribution
     if typeof(x0) <: Distributions.Sampleable
@@ -68,7 +96,8 @@ function FPFEnsemble(state_model::ScalarDiffusionStateModel, N::Int)
         FPFEnsemble([x0], N)
     end#if
 end
-    
+  
+                
 function Propagator(state_model::ScalarDiffusionStateModel, dt::Float64)
     function propagate!(x::Float64)
         x + state_model.drift_function(x)*dt + state_model.diffusion_function(x)*sqrt(dt)*randn()

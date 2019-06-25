@@ -6,6 +6,8 @@ Returns a function called `emit` that emits an observation.
 """
 function Emitter(model::ObservationModel) end
 
+
+
 """
     DiffusionObservationModel(observation_function::Function, m::Int) <: ObservationModel
 
@@ -17,6 +19,15 @@ struct DiffusionObservationModel{T, S} <: ContinuousTimeObservationModel{T, S}
     m::Int
 end
 
+
+
+
+
+
+
+
+
+
 """
     DiffusionObservationModel1d(observation_function::Function) <: ObservationModel
 
@@ -27,11 +38,25 @@ struct ScalarDiffusionObservationModel <: ContinuousTimeObservationModel{Float64
     observation_function::Function
 end
 
+Base.show(io::IO, model::ScalarDiffusionObservationModel) = print(io, "Scalar with additive Gaussian white noise")
+
+
+
+
+
+
+
+
+
 function Emitter(obs_model::ScalarDiffusionObservationModel, dt::Float64)
     function emit(x::Float64)
         obs_model.observation_function(x)*dt+sqrt(dt)*randn()
     end
 end
+
+
+
+
 
 """
     PointprocessObservationModel(observation_function::Function, log_observation_function::Function, m::Int) <: ObservationModel
@@ -48,3 +73,5 @@ struct ScalarPointprocessObservationModel <: ContinuousTimeObservationModel{Floa
     observation_function::Function
     log_observation_function::Function
 end
+
+Base.show(io::IO, model::ScalarPointprocessObservationModel) = print(io, "Scalar with Poisson noise")
