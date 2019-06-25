@@ -63,7 +63,7 @@ abstract type ContinuousTimeHiddenStateModel{T} <: HiddenStateModel{T} end
 
 Abstract type for any continuous-time model of the observations of type `T` and hidden states of type `S`.
 """
-abstract type ContinuousTimeObservationModel{S, T} <: ObservationModel{T, S} end
+abstract type ContinuousTimeObservationModel{S, T} <: ObservationModel{S, T} end
 
 
 
