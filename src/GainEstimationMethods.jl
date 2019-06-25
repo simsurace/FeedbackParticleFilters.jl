@@ -276,7 +276,7 @@ function Solve!(eq::ScalarPoissonEquation, method::DifferentialRKHSMethod1d)
     beta = M \ b
 
     # write potential and gain
-    eq.potential = ( K*view(beta, 1:N) - Kx*view(beta, N+1:2*N) )/lamb
+    eq.potential = ( K*view(beta, 1:N) - Kx*view(beta, N+1:2*N) ) / lamb
     broadcast!(-, eq.potential, eq.potential, StatsBase.mean(eq.potential))
-    eq.gain = ( Kx * view(beta, 1:N) + Kxy * view(beta, N+1:2*N) )/lamb
+    eq.gain = ( Kx * view(beta, 1:N) + Kxy * view(beta, N+1:2*N) ) / lamb
 end

@@ -102,14 +102,14 @@ end #testset 1d regularized semigroup gain estimation
                                        0.863411396927212  
                                        1.9307957511303933 
                                        0.5684889795489233 
-                                       0.00768453173042769 ])) < 1e-8
+                                       0.00768453173042769 ])) < 1e-6
         print(".")
         @test maximum(abs.(eq.potential - [ -2.072323421422226 
                                              1.0382735928503166
                                             -1.8816738883083453
                                             -1.1749266092106723
                                              2.0268744617672745
-                                             2.0637758643236275 ])) < 1e-8
+                                             2.0637758643236275 ])) < 1e-6
         println("DONE.")
 end #testset 1d differential loss RKHS gain estimation
 
