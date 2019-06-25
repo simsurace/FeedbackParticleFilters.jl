@@ -93,23 +93,23 @@ end #testset 1d regularized semigroup gain estimation
               -1.5151245392598531
                0.02565906919199346
                0.15161614796874012]
-        testens=FPFEnsemble(x_pf,6)
+        testens=FPFEnsemble(x_pf,N)
         Update!(eq, testens)
         Solve!(eq, DifferentialRKHSMethod1d(1E1, 1E-6));
         print(".")
-        @test maximum(abs.(eq.gain - [ 4.724496383371694e-6 
-                          8.435238726186634e-5 
-                          3.108281028937963e-5 
-                          6.950864704069416e-5 
-                          2.046560326376124e-5 
-                          2.7664314229539685e-7 ])) < 1e-8
+        @test maximum(abs.(eq.gain - [ 0.1312360106492137 
+                                       2.343121868385176  
+                                       0.863411396927212  
+                                       1.9307957511303933 
+                                       0.5684889795489233 
+                                       0.00768453173042769 ])) < 1e-8
         print(".")
-        @test maximum(abs.(eq.potential - [ 0.0006577332347096013
-                               0.0007697147272234129
-                               0.0006645966179017011
-                               0.0006900395199492173
-                               0.0008053043585044234
-                               0.0008066328089964521 ])) < 1e-8
+        @test maximum(abs.(eq.potential - [ -2.072323421422226 
+                                             1.0382735928503166
+                                            -1.8816738883083453
+                                            -1.1749266092106723
+                                             2.0268744617672745
+                                             2.0637758643236275 ])) < 1e-8
         println("DONE.")
 end #testset 1d differential loss RKHS gain estimation
 
