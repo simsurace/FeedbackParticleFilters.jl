@@ -50,10 +50,10 @@ struct SemigroupMethod1d <: SemigroupMethod
 end
 SemigroupMethod1d(epsilon::Float64, delta::Float64) = SemigroupMethod1d(epsilon, delta, 100)
 
-function Solve!(eq::ScalarPoissonEquation, method::SemigroupMethod1d) 
+function Solve!(eq::ScalarPoissonEquation, method::SemigroupMethod1d)
     N = length(eq.positions)
     H = copy(eq.H)
-    broadcast!(-, H, H, eq.mean_H)   
+    broadcast!(-, H, H, eq.mean_H)
     broadcast!(*, H, H, method.epsilon)
 
     # compute T operator
@@ -111,10 +111,10 @@ struct RegularizedSemigroupMethod1d <: SemigroupMethod
 end
 RegularizedSemigroupMethod1d(epsilon::Float64, delta::Float64) = SemigroupMethod1d(epsilon, delta, 100, 1E-3)
 
-function Solve!(eq::ScalarPoissonEquation, method::RegularizedSemigroupMethod1d) 
+function Solve!(eq::ScalarPoissonEquation, method::RegularizedSemigroupMethod1d)
     N = length(eq.positions)
     H = copy(eq.H)
-    broadcast!(-, H, H, eq.mean_H)   
+    broadcast!(-, H, H, eq.mean_H)
     broadcast!(*, H, H, method.epsilon)
 
     # compute T operator
@@ -128,7 +128,7 @@ function Solve!(eq::ScalarPoissonEquation, method::RegularizedSemigroupMethod1d)
     end
     broadcast!(/, T, T, sqrt.(sum(T,dims=1) .* sum(T,dims=2)))
     broadcast!(/, T, T, sum(T,dims=2))
-    
+
     # add noise to regularize T
     for i in 1:N
         T[i,i] -=  method.lambda * rand(Distributions.Uniform(0.9,1))
@@ -206,7 +206,7 @@ function DifferentialRKHS1d_MakeMatrices(vec::AbstractVector, eps::Number)
     eps2 = eps^2
 
     mat = zeros(Float64, L, L, 3)
-    
+
     @inbounds @simd for i in 1:L
                 mat[i,i,1] = 1
                 mat[i,i,3] = 1/eps
@@ -222,7 +222,7 @@ function DifferentialRKHS1d_MakeMatrices(vec::AbstractVector, eps::Number)
                     mat[i,j,3] = mat[j,i,3] = Kxy
                 end
     end
-        
+
     return view(mat, :, :, 1), view(mat, :, :, 2), view(mat, :, :, 3)
 end
 
@@ -231,19 +231,19 @@ end
 function DifferentialRKHS1d_M_and_b!(A::AbstractMatrix, B::AbstractMatrix, C::AbstractMatrix, v::AbstractVector, lamb::Number)
     # constructs matrix M and vector b for DifferentialRKHSMethod1d
     L = size(A,1)
-    
+
     b = zeros(Float64, 2*L)
     LinearAlgebra.mul!(view(b,   1:L  ), A, v)
     LinearAlgebra.mul!(view(b, L+1:2*L), B, v)
-    
-    
+
+
     B2 = B*B
     BC = B*C
     C2 = C*C
     LinearAlgebra.lmul!(lamb, A)
     LinearAlgebra.lmul!(lamb, B)
     LinearAlgebra.lmul!(lamb, C)
-    
+
     M = zeros(Float64, 2*L, 2*L)
     @simd for j in 1:L
         @simd for i in 1:L
@@ -262,7 +262,7 @@ function Solve!(eq::ScalarPoissonEquation, method::DifferentialRKHSMethod1d)
     eps = method.epsilon
     N = length(eq.positions)
     lamb = N * method.lambda
-   
+
     H = copy(eq.H)
     broadcast!(-, H, H, eq.mean_H)
 
@@ -270,12 +270,13 @@ function Solve!(eq::ScalarPoissonEquation, method::DifferentialRKHSMethod1d)
     K, Kx, Kxy = DifferentialRKHS1d_MakeMatrices(eq.positions, eps)
 
     # compute M and b
-    M, b = DifferentialRKHS1d_M_and_b!(K, Kx, Kxy, H, lamb) # warning: this function modifies K, Kx, and Kxy
-   
+    M, b = DifferentialRKHS1d_M_and_b!(K, Kx, Kxy, H, lamb) # warning: this function multiplies K, Kx, and Kxy by lamb
+
     # solve linear system
-    beta = M \ b 
-   
+    beta = M \ b
+
     # write potential and gain
-    eq.potential = N * ( K*view(beta, 1:N) - Kx*view(beta, N+1:2*N) )
-    eq.gain = N * ( Kx * view(beta, 1:N) + Kxy * view(beta, N+1:2*N) )
+    eq.potential = ( K*view(beta, 1:N) - Kx*view(beta, N+1:2*N) )/lamb
+    broadcast!(-, eq.potential, eq.potential, StatsBase.mean(eq.potential))
+    eq.gain = ( Kx * view(beta, 1:N) + Kxy * view(beta, N+1:2*N) )/lamb
 end
