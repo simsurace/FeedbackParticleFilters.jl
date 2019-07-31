@@ -3,14 +3,15 @@ uuid = "f4440bb6-80da-11e9-1db0-85cc1897f664"
 authors = ["Simone Carlo Surace <simsurace@gmx.net>"]
 version = "0.1.0"
 
-[compat]
-julia = "1"
-
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
+
+[compat]
+julia = "1"
 
 [extras]
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"

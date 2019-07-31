@@ -85,7 +85,7 @@ Abstract type for a filtering problem for observations of type `T` and hidden st
 """
 const AbstractFilteringProblem = AbstractProblem{S, T, <:HiddenStateModel{S}, <:ObservationModel{S, T}} where {S,T}
 
-function Base.show(io::IO, problem::AbstractFilteringProblem{S, T, M1, M2}) where {S,T,M1,M2}
+function Base.show(io::IO, problem::AbstractFilteringProblem{S, T}) where {S,T}
     println(io, "Generic filtering problem")
     println(io, "    Type of hidden state:     ", S)
     println(io, "    Type of observation:      ", T)
@@ -105,7 +105,7 @@ Abstract type for a filtering problem in continuous time for observations of typ
 """
 const ContinuousTimeFilteringProblem = AbstractFilteringProblem{S, T, <:ContinuousTimeHiddenStateModel{S}, <:ContinuousTimeObservationModel{S, T}} where {S,T}
 
-function Base.show(io::IO, problem::ContinuousTimeFilteringProblem{S, T, M1, M2}) where {S,T,M1,M2}
+function Base.show(io::IO, problem::ContinuousTimeFilteringProblem{S, T}) where {S,T}
     println(io, "Continuous-time filtering problem")
     println(io, "    Type of hidden state:     ", S)
     println(io, "    Type of observation:      ", T)

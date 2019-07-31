@@ -1,4 +1,56 @@
 """
+    propagate(state::S, state_model::HiddenStateModel{S}) where S
+
+Propagate the hidden `state` by one time step according to `state_model`.
+"""
+function propagate(state::S, state_model::HiddenStateModel{S}) where S end
+
+
+
+
+#function (state_model::M)(state::S) where M<:HiddenStateModel{S} where S
+    #propagate(state, state_model)
+#end
+
+
+
+
+
+
+
+"""
+    propagate!(state, state_model) -> state
+
+In-place version of `propagate`.
+"""
+function propagate!(state::S, state_model::HiddenStateModel{S}) where S 
+    state = propagate(state, state_model)
+end
+
+
+"""
+    propagate(ensemble::ParticleRepresentation{S}, state_model::HiddenStateModel{S}) where S
+
+Propagate each member of the particle ensemble by one time step according to `state_model`.
+"""
+function propagate(ensemble::ParticleRepresentation{S}, state_model::HiddenStateModel{S}) where S
+    Map(propagate, ensemble)
+end
+
+
+"""
+    propagate(filter_rep::AbstractFilterRepresentation{S}, state_model::HiddenStateModel{S}) where S
+
+Propagate each member of the particle ensemble by one time step according to `state_model`.
+"""
+function propagate(filter_rep::AbstractFilterRepresentation{S}, state_model::HiddenStateModel{S}) where S end
+
+
+
+
+
+
+"""
     eltype(filter_rep::T) where T<:AbstractFilterRepresentation{S} where S <: AbstractHiddenState
 
 Extract S.
