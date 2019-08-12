@@ -26,7 +26,7 @@ Supported argument types:
 * Any subtype of ObservationModel
 * Any subtype of AbstractFilteringProblem
 """
-function state_type(arg) end
+function obs_type(arg) end
 
 """
     time_type(model::AbstractModel)

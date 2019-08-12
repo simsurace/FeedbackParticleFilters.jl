@@ -89,9 +89,9 @@ version = "1.1.0"
 
 [[PDMats]]
 deps = ["Arpack", "LinearAlgebra", "SparseArrays", "SuiteSparse", "Test"]
-git-tree-sha1 = "8b68513175b2dc4023a564cb0e917ce90e74fd69"
+git-tree-sha1 = "f99548922adf8dd5df2f02ab0063944201a12ed8"
 uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
-version = "0.9.7"
+version = "0.9.8"
 
 [[Pkg]]
 deps = ["Dates", "LibGit2", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
@@ -172,31 +172,13 @@ git-tree-sha1 = "b3a4e86aa13c732b8a8c0ba0c3d3264f55e6bb3e"
 uuid = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
 version = "0.8.0"
 
-[[Strided]]
-deps = ["LinearAlgebra", "TupleTools"]
-git-tree-sha1 = "b929f81ca5e78362a4c1e935bb5e7bee27dc2279"
-uuid = "5e0ebb24-38b0-5f93-81fe-25c709ecae67"
-version = "0.3.1"
-
 [[SuiteSparse]]
 deps = ["Libdl", "LinearAlgebra", "SparseArrays"]
 uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
 
-[[TensorOperations]]
-deps = ["LinearAlgebra", "Strided", "TupleTools"]
-git-tree-sha1 = "2804781ab5e899a0e4c61a4d655e4dea88553710"
-uuid = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
-version = "1.1.0"
-
 [[Test]]
 deps = ["Distributed", "InteractiveUtils", "Logging", "Random"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-
-[[TupleTools]]
-deps = ["Random", "Test"]
-git-tree-sha1 = "b006524003142128cc6d36189dce337729aa0050"
-uuid = "9d95972d-f1c8-5527-a6e0-b4b365fa01f6"
-version = "1.1.0"
 
 [[URIParser]]
 deps = ["Test", "Unicode"]

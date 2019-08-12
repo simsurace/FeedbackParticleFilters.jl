@@ -15,9 +15,9 @@ function solve!(eq::PoissonEquation, method::ConstantGainApproximation)
                 g += eq.positions[i, l] * htilde[j, l]
             end
             for k in 1:N
-                gain[i, k, j] = g/N
+                eq.gain[i, k, j] = g/N
             end
         end
     end
-    return gain
+    return eq.gain
 end

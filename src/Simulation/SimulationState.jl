@@ -1,4 +1,4 @@
-struct SystemFilterState{S1, S2, TF<:AbstractFilterState}
+struct SimulationState{S1, S2, TF<:AbstractFilterState}
     hidden_state::S1
     obs::S2
     filter_state::TF
@@ -13,17 +13,20 @@ end
 
 Runs a simulation of the hidden state, observation, and filtering algorithm for a duration of `no_of_timesteps`.
 """
-function SystemFilterState(filt_prob, filt_algo)
-    hidden_state = initialize(state_model(filt_prob))
-    obs          = obs_model(filt_prob)(dt)
-    filter_state = initialize(filt_algo)
-    return SystemFilterState(hidden_state, obs, filter_state)
+function SimulationState(filt_prob, filt_algo)
+    hidden_state = deepcopy(initialize(state_model(filt_prob)))
+    obs          = obs_model(filt_prob)(hidden_state, zero(eltype(hidden_state)))
+    filter_state = deepcopy(initialize(filt_algo))
+    return SimulationState(hidden_state, obs, filter_state)
 end
 
 
-
-
-
+hidden_state(st::SimulationState) = st.hidden_state
+obs(st::SimulationState)          = st.obs
+filter_state(st::SimulationState) = st.filter_state
+cond_mean(x::SimulationState)     = mean(filter_state(x))
+cond_cov(x::SimulationState)      = cov(filter_state(x))
+cond_var(x::SimulationState)      = var(filter_state(x))
 
 
 
@@ -34,10 +37,10 @@ end
 Propagates the system and filter states for one time-step according to the specified filtering problem and algorithm.
 """
 function propagate!(
-    sfs::SystemFilterState, 
+    sfs::SimulationState, 
     filt_prob::AbstractFilteringProblem{S1, S2, ContinuousTime, ContinuousTime}, 
     filt_algo::AbstractFilteringAlgorithm{ContinuousTime, ContinuousTime}, 
-    dt)
+    dt) where {S1, S2}
     
     hidden_state = sfs.hidden_state
     obs          = sfs.obs

@@ -44,3 +44,10 @@ function obs_dim(model::ObservationModel) end
 state_type(model::ObservationModel{S1, S2, T}) where {S1, S2, T} = S1
 obs_type(model::ObservationModel{S1, S2, T}) where {S1, S2, T}   = S2
 time_type(model::ObservationModel{S1, S2, T}) where {S1, S2, T}  = T
+
+
+
+
+function emit!(obs, hidden_state, obs_model::ObservationModel{S1, S2, ContinuousTime}, dt) where {S1, S2}
+    obs .= obs_model(hidden_state, dt)
+end

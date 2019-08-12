@@ -23,7 +23,7 @@ function get_pos(ensemble::ParticleRepresentation, i) end
 
 Return a list of particle position views from `ensemble`.
 """
-list_of_pos(ensemble::ParticleRepresentation) = [get_particle(ens, i) for i in 1:no_of_particles(ens)]
+list_of_pos(ens::ParticleRepresentation) = [get_particle(ens, i) for i in 1:no_of_particles(ens)]
 
 
 
@@ -74,12 +74,12 @@ dim(ensemble::ParticleRepresentation) = particle_dim(ensemble) * no_of_particles
 
 Return the type of individual particles in `ensemble`.
 """
-Base.eltype(ensemble::ParticleRepresentation{S}) = S
+Base.eltype(ensemble::ParticleRepresentation{S}) where S = S
 
 
 
-function propagate!(ens::ParticleRepresentation{S}, model::HiddenStateModel{S}) end
-function propagate!(ens::ParticleRepresentation{S}, model::ContinuousTimeHiddenStateModel{S}, dt) end
+#function propagate!(ens::ParticleRepresentation{S}, model::HiddenStateModel{S}) where S end
+#function propagate!(ens::ParticleRepresentation{S}, model::ContinuousTimeHiddenStateModel{S}, dt) where S end
 
 
 

@@ -35,3 +35,7 @@ function eff_no_of_particles(ensemble::WeightedParticleRepresentation)
     end
     return 1/sum
 end
+
+
+
+dim(ensemle::WeightedParticleRepresentation) = (particle_dim(ensemble) + 1) * no_of_particles(ensemble)

@@ -1,4 +1,4 @@
-using FeedbackParticleFilters, Distributions, Test
+using FeedbackParticleFilters, Distributions
 
 println("Testing hidden state models:")
 @testset "Scalar diffusion model" begin

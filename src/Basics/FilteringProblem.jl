@@ -28,10 +28,15 @@ obs_model(problem::FilteringProblem)        = problem.obs_model
 
 
 
-# optional methods
+# pretty printing
+function Base.show(io::IO, ::MIME"text/plain", problem::FilteringProblem{S1, S2, T1, T2, M1, M2}) where {S1, S2, T1, T2, M1, M2}
+    print(io, T1, " - ", T2," filtering problem
+    hidden state model:                     ", problem.state_model,"
+    observation model:                      ", problem.obs_model,"
+    hidden state type:                      ", S1,"
+    observation type:                       ", S2)
+end
+
 function Base.show(io::IO, problem::FilteringProblem{S1, S2, T1, T2, M1, M2}) where {S1, S2, T1, T2, M1, M2}
-    println(io, "Filtering problem with")
-    println(io, "    ", T1, " hidden state of type     ", S1)
-    println(io, "    ", T2, " observation of type      ", S2)
-    println(io, "Call state_model and obs_model in order to display further information.")
+    print(io, T1, " - ", T2," with ", M1, " and ", M2)
 end

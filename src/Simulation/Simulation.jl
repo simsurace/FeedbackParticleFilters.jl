@@ -18,19 +18,29 @@ end
 
 
 
+function Base.show(io::IO, sim::ContinuousTimeSimulation)
+    print(io, "Continuous-time simulation
+    filtering problem:                      ", sim.filt_prob,"
+    filtering algorithm:                    ", sim.filt_algo,"
+    number of time steps:                   ", sim.no_of_timesteps,"
+    size of time step:                      ", sim.dt)
+end
+
+
+
 """
     run!(simulation)
 
 Runs the simulation.
 """
 function run!(simulation::Simulation; records = ())
-    sfs          = SystemFilterState(simulation.filt_prob, simulation.filt_algo)
+    sfs = SimulationState(simulation.filt_prob, simulation.filt_algo)
     out = Array{Any, 2}(undef, length(records), simulation.no_of_timesteps)
     
     for t in 1:simulation.no_of_timesteps
         propagate!(sfs, simulation.filt_prob, simulation.filt_algo, simulation.dt)
         for (i,record) in enumerate(records)
-            out[i,t] = record(sfs)
+            out[i,t] = deepcopy(record(sfs))
         end
     end
     return out

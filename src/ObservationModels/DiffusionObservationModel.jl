@@ -18,6 +18,7 @@ end
                 
             
                 
+drift(model::DiffusionObservationModel) = model.observation_function
 state_dim(model::DiffusionObservationModel) = model.n
 obs_dim(model::DiffusionObservationModel) = model.m
 noise_dim(model::DiffusionObservationModel) = model.m
@@ -26,6 +27,35 @@ noise_dim(model::DiffusionObservationModel) = model.m
 
 
 
+
+observation_function(obs_model::DiffusionObservationModel) = drift(obs_model)
+
+
+
+
+
+
+
+
+
+function Base.show(io::IO, ::MIME"text/plain", model::DiffusionObservationModel)
+    print(io, "Diffusion process model for the observation
+    type of hidden state:                   ", state_dim(model),"-dimensional vector
+    type of observation:                    ", obs_dim(model),"-dimensional vector
+    number of independent Brownian motions: ", noise_dim(model))
+end
+
+function Base.show(io::IO, model::DiffusionObservationModel)
+    print(io, obs_dim(model),"-dimensional diffusion with ", noise_dim(model), "-dimensional Brownian motion")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", model::Type{DiffusionObservationModel{S,T}}) where {S,T}
+    print(io, "DiffusionObservationModel{", S, ",", T, "}")
+end
+
+function Base.show(io::IO, model::Type{DiffusionObservationModel{S,T}}) where {S,T}
+    print(io, "DiffusionObservationModel")
+end
 
 
 ######################
@@ -39,8 +69,8 @@ noise_dim(model::DiffusionObservationModel) = model.m
 
 
 function (model::DiffusionObservationModel{S1, S2, TF})(x::AbstractVector{S1}, dt) where {S1, S2, TF}
-    dV = randn(T, noise_dim(model))
-    return h(x) * dt + dV * sqrt(dt)
+    dV = randn(S1, noise_dim(model))
+    return drift(model)(x) * dt + dV * sqrt(dt)
 end
 
 
@@ -48,7 +78,7 @@ end
 
 
 
-function (model::LinearDiffusionObservationModel)(x::AbstractMatrix{T}, dt) where T
+function (model::DiffusionObservationModel)(x::AbstractMatrix{T}, dt) where T
     dV = randn(T, noise_dim(model), size(x, 2))
     return mapslices(h, x, dims=1) * dt + dV * sqrt(dt)
 end

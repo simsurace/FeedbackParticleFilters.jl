@@ -8,6 +8,16 @@ struct UnweightedParticleEnsemble{T} <: UnweightedParticleRepresentation{Vector{
 end
 
 
+UnweightedParticleEnsemble(vec::Vector{T}, N::Int) where T<:Number = UnweightedParticleEnsemble(repeat(vec, 1, N))
+
+
+
+
+
+
+
+
+
 particle_dim(ens::UnweightedParticleEnsemble)    = size(ens.positions, 1)
 
 
@@ -40,7 +50,7 @@ get_pos(ens::UnweightedParticleEnsemble{T}, i) where T<:AbstractMatrix = view(en
 
 Base.show(io::IO, ens::UnweightedParticleEnsemble) = print(io, "Unweighted particle ensemble
     # of particles: ", no_of_particles(ens),"
-    particle type:  ", particle_dim(ens)"-dimensional ", eltype(ens))
+    particle type:  ", particle_dim(ens),"-dimensional ", eltype(ens))
 
 
 
@@ -48,6 +58,26 @@ Base.show(io::IO, ens::UnweightedParticleEnsemble) = print(io, "Unweighted parti
 
 
 
-function propagate!(ens::UnweightedParticleEnsemble{S}, model::HiddenStateModel{S}, dt)
+function UnweightedParticleEnsemble(model::HiddenStateModel, N::Int)
+    return UnweightedParticleEnsemble(hcat([initialize(model) for i in 1:N]...))
+end
+
+
+
+
+
+
+
+function propagate!(ens::UnweightedParticleEnsemble{S}, model::HiddenStateModel{Vector{S}, ContinuousTime}, dt) where S
     propagate!(ens.positions, model, dt)
 end
+
+
+
+
+
+
+
+mean(ens) = Statistics.mean(ens.positions, dims=2)
+cov(ens)  = Statistics.cov(ens.positions, dims=2, corrected=false)
+var(ens)  = Statistics.var(ens.positions, dims=2, corrected=false)

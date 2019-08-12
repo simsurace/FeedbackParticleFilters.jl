@@ -13,7 +13,7 @@ abstract type AbstractFilterRepresentation{S} end
 
 Return the type which is represented by `rep`.
 """
-represented_type(rep::AbstractFilterRepresentation{S}) = S
+represented_type(rep::AbstractFilterRepresentation{S}) where S = S
 
 
 
@@ -23,7 +23,7 @@ represented_type(rep::AbstractFilterRepresentation{S}) = S
 
 Return the dimensionality of the filter representation `rep`.
 """
-function dim(rep::AbstractFilterRepresentation{S}) end
+function dim(rep::AbstractFilterRepresentation{S}) where S end
 
 
 

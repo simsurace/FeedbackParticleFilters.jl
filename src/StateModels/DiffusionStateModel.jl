@@ -23,17 +23,21 @@ struct DiffusionStateModel{S, F1, F2, TI} <: HiddenStateModel{Vector{S}, Continu
         F = f(x)
         G = g(x)
             
-        if length(f(x)) == size(g(x), 1)
-            n = length(f(x)) 
+        if length(F) == length(x)
+            n = length(F)
         else 
+            error("Error: output of drift_function and initial condition have incompatible lengths.")
+        end
+                
+        if length(F) != size(G, 1)
             error("Error: drift_function and diffusion_function have incompatible output sizes.")
         end
                 
-        m = size(g(x), 2)
+        m = size(G, 2)
                 
         if eltype(x) == eltype(F) == eltype(G)
             S = eltype(x)
-            if x isa Vector{T}
+            if x isa Vector
                 return new{S, typeof(f), typeof(g), typeof(init)}(n, m, f, g, init)
             else
                 error("Error: initial condition has incorrect type.")
@@ -43,11 +47,11 @@ struct DiffusionStateModel{S, F1, F2, TI} <: HiddenStateModel{Vector{S}, Continu
         end
     end
 end
-               
-
                 
                 
-
+                
+     
+                       
 #####################
 ### BASIC METHODS ###
 #####################
@@ -57,33 +61,73 @@ end
                 
                 
                 
-                
+
+function drift(model::DiffusionStateModel)
+    if hasmethod(model.drift_function, Tuple{AbstractMatrix})
+        return model.drift_function
+    else
+        f(x) = model.drift_function(x)
+        f(x::AbstractMatrix) = mapslices(f, x, dims=1)
+        return f
+    end
+end
+               
+function diffusion(model::DiffusionStateModel)         
+    if hasmethod(model.diffusion_function, Tuple{AbstractMatrix})
+        return model.diffusion_function
+    else
+        g(x) = model.diffusion_function(x)                       
+        g(x::AbstractMatrix) = cat([model.diffusion_function(col) for col in eachcol(x)]..., dims=3)
+        return g
+    end
+end
+                        
+initial_condition(model::DiffusionStateModel) = model.init
+                        
 state_dim(model::DiffusionStateModel) = model.n
 noise_dim(model::DiffusionStateModel) = model.m
+initialize(model::DiffusionStateModel{T, F1, F2, TI}) where {T, F1, F2, TI<:Distributions.Sampleable}      = rand(model.init)
+initialize(model::DiffusionStateModel{T, F1, F2, TI}) where TI<:AbstractVector{T} where {T, F1, F2}        = model.init
+                
+                
+                
+                
+                
+drift_function(model::DiffusionStateModel)     = drift(model)
+diffusion_function(model::DiffusionStateModel) = diffusion(model)
+        
+
 
                 
                 
+                            
                 
-                
-                
-                
-                           
-initial_condition(model::DiffusionStateModel{T, F1, F2, TI}) where {F1, F2, TI<:Distributions.Sampleable}      = rand(model.init)
-
-                
-                
-                
-                
-                
-                
-                
-                
-function Base.show(io::IO, model::DiffusionStateModel)
+function Base.show(io::IO, ::MIME"text/plain", model::DiffusionStateModel)
     print(io, "Diffusion process model for the hidden state
     type of hidden state:                   ", state_dim(model),"-dimensional vector
     number of independent Brownian motions: ", noise_dim(model),"
     initial condition:                      ", model.init isa Distributions.Sampleable ? "random" : "fixed")
 end
+
+function Base.show(io::IO, model::DiffusionStateModel)
+    print(io, state_dim(model),"-dimensional diffusion with ", noise_dim(model), "-dimensional Brownian motion")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", model::Type{DiffusionStateModel{S1, S2, S3, S4}}) where {S1, S2, S3, S4}
+    print(io, "DiffusionStateModel{", S1, ",", S2, ",", S3, ",", S4, "}")
+end
+
+function Base.show(io::IO, model::Type{DiffusionStateModel{S1, S2, S3, S4}}) where {S1, S2, S3, S4}
+    print(io, "DiffusionStateModel")
+end
+                
+                
+                
+                
+                
+                
+                
+                
                 
                 
                 
@@ -98,7 +142,7 @@ end
                 
                 
                 
-(model::DiffusionStateModel)(x::AbstractVector, dt) = x + model.drift_function(x)*dt + sqrt(dt)*model.diffusion_function(x)*randn(eltype(x), dimW(model))
+(model::DiffusionStateModel)(x::AbstractVector, dt) = x + model.drift_function(x)*dt + sqrt(dt)*model.diffusion_function(x)*randn(eltype(x), noise_dim(model))
 
 
                 
@@ -110,8 +154,11 @@ end
                 
 function (model::DiffusionStateModel)(x::AbstractMatrix, dt)
     N   = size(x, 2)
-    F   = model.drift_function(x)
-    G   = model.diffusion_function(x)
+    F   = drift_function(model)(x)
+    G   = diffusion_function(model)(x)
+    if ndims(G) == 2
+        G = repeat(G, 1, 1, N)
+    end
     out = zeros(eltype(x), state_dim(model), N)
     sqr = sqrt(dt)
     @inbounds for b in 1:N
@@ -130,8 +177,8 @@ end
                 
 function propagate!(x::AbstractVector, model::DiffusionStateModel, dt)
     N   = size(x, 2)
-    F   = model.drift_function(x)
-    G   = model.diffusion_function(x)
+    F   = drift_function(model)(x)
+    G   = diffusion_function(model)(x)
     sqr = sqrt(dt)
     @inbounds for c in 1:noise_dim(model), a in 1:state_dim(model)
             x[a]  +=  dt * F[a]  +  sqr * G[a,c] * randn(eltype(x))
@@ -150,13 +197,71 @@ end
                 
 function propagate!(x::AbstractMatrix, model::DiffusionStateModel, dt)
     N   = size(x, 2)
-    F   = model.drift_function(x)
-    G   = model.diffusion_function(x)
+    F   = drift_function(model)(x)
+    G   = diffusion_function(model)(x)
+    if ndims(G) == 2
+        G = repeat(G, 1, 1, N)
+    end
     sqr = sqrt(dt)
     @inbounds for b in 1:N
-        for c in 1:noise_dim(model), a in 1:state_dim(model)
-            x[a,b]  +=  dt * F[a,b]  +  sqr * G[a,c,b] * randn(eltype(x))
+        for c in 1:noise_dim(model)
+            for a in 1:state_dim(model)
+                x[a,b]  +=  dt * F[a,b]  +  sqr * G[a,c,b] * randn(eltype(x))
+            end
         end
     end
     return x
 end 
+                        
+                        
+                        
+                        
+                        
+                        
+################################
+### CONVENIENCE CONSTRUCTORS ###
+################################
+
+struct ContinuousMultiFromUnivariateDistribution{T<:ContinuousUnivariateDistribution} <: ContinuousMultivariateDistribution
+    distr::T
+end                  
+                        
+import Base.length
+import Base.eltype
+                        
+length(d::ContinuousMultiFromUnivariateDistribution) = 1
+eltype(d::ContinuousMultiFromUnivariateDistribution) = Array{eltype(d.distr), 1}
+                        
+import Distributions._rand!
+                        
+function _rand!(rng::Random.AbstractRNG, d::ContinuousMultiFromUnivariateDistribution, x::AbstractVector)
+    x[1] = rand(rng, d.distr)
+end
+                        
+function _rand!(rng::Random.AbstractRNG, d::ContinuousMultiFromUnivariateDistribution, x::AbstractMatrix)
+    for i in size(x,2)
+        x[1,i] = rand(rng, d.distr)
+    end
+end
+                        
+function _rand!(rng::Random.AbstractRNG, d::ContinuousMultiFromUnivariateDistribution, x::AbstractVector{Vector{T}}) where T
+    for i in length(x)
+        _rand!(rng, d, x[i])
+    end
+end
+                        
+import Distributions._logpdf
+function _logpdf(d::ContinuousMultiFromUnivariateDistribution, x::AbstractVector)
+    logpdf(d.distr, x[1])
+end
+                        
+function _logpdf(d::ContinuousMultiFromUnivariateDistribution, x::AbstractMatrix)
+    [logpdf(d.distr, x[1,i]) for i in size(x,2)]
+end                        
+                        
+function ScalarDiffusionStateModel(f::Function, g::Function, init::ContinuousUnivariateDistribution)
+    F(x) = [f(x)]
+    G(x) = g(x)*ones(1,1)
+    INIT = ContinuousMultiFromUnivariateDistribution(init)
+    return DiffusionStateModel(F, G, INIT)
+end
