@@ -42,7 +42,7 @@ using Distributions
 state_model = ScalarDiffusionStateModel(x->-x, x->sqrt(2.), Normal())
 obs_model   = ScalarDiffusionObservationModel(x->x)
 
-filt_prob   = ContinuousTimeFilteringProblem(state_model, obs_model)
+filt_prob   = FilteringProblem(state_model, obs_model)
 ```
 Once the filtering problem is defined, an appropriate filtering algorithm can be defined like this:
 ```julia
