@@ -4,6 +4,7 @@ using LinearAlgebra
 using Distributions
 using Statistics
 using Random
+using PDMats
 
 import Statistics.mean
 import Statistics.cov
