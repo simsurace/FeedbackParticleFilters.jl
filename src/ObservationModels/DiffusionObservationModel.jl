@@ -91,3 +91,24 @@ end
 function (model::DiffusionObservationModel{S1, S2, TF})(x::AbstractVector{Vector{S1}}, dt) where {S1, S2, TF}
     return [model(y, dt) for y in x]
 end
+
+
+
+
+
+
+
+################################
+### CONVENIENCE CONSTRUCTORS ###
+################################
+        
+function ScalarDiffusionObservationModel(h::Function, n = 1)
+    if n == 1
+        H1(x) = [h(x[1])]
+        return DiffusionObservationModel{Float64, Float64, typeof(H1)}(n, 1, H1)
+    elseif n > 1
+        H2(x) = [h(x)]
+        return DiffusionObservationModel{Float64, Float64, typeof(H2)}(n, 1, H2)
+    end
+    
+end

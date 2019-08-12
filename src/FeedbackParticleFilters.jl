@@ -147,6 +147,7 @@ export
 include("ObservationModels/DiffusionObservationModel.jl")
 export
     DiffusionObservationModel,
+    ScalarDiffusionObservationModel,
     initial_condition,
     drift,
     state_dim,

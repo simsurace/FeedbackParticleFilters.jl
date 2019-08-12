@@ -34,29 +34,18 @@ Set up a basic one-dimensional linear-Gaussian continuous-time filtering problem
 ```julia
 using Distributions
 state_model = ScalarDiffusionStateModel(x->-x, x->sqrt(2.), Normal())
-obs_model = ScalarDiffusionObservationModel(x->x)
+obs_model   = ScalarDiffusionObservationModel(x->x)
 
-filt_prob = ContinuousTimeFilteringProblem(state_model, obs_model)
+filt_prob   = ContinuousTimeFilteringProblem(state_model, obs_model)
 ```
-Once the filtering problem is defined, you can use it to perform a variety of tasks.
-
-For example, you may initialize an ensemble of `N=100` particles:
+Once the filtering problem is defined, an appropriate filtering algorithm can be defined like this:
 ```julia
-ensemble = FPFEnsemble(state_model, 100)
+method     = ConstantGainApproximation()
+filter     = FPF(filt_prob, method, 100)
 ```
-The following generates a Poisson equation for the gain using the ensemble above.
-The equation is solved using the semigroup gain estimation method.
+The package comes with methods to automatically simulate a given system:
 ```julia
-eq = GainEquation(state_model, obs_model, ensemble)
-method = SemigroupMethod1d(1E-1,1E-2)
-Solve!(eq, method)
-```
-The gain at the particle locations is stored in `eq.gain`.
-These low-level building blocks can then be used to write custom numerical implementations.
-The package also comes with methods to automatically simulate given filtering problem:
-```julia
-filter = FeedbackParticleFilter(filt_prob, method, 100);
-simulation = FPFSimulation(filter, 10000, 0.01);
+simulation = ContinuousTimeSimulation(filt_prob, filter, 10000, 0.01)
 run!(simulation)
 ```
 To learn more about how to use this package, please check out some tutorials or the documentation linked below.
@@ -66,6 +55,7 @@ To learn more about how to use this package, please check out some tutorials or 
 There are various Jupyter notebooks that explore various key functions of the package:
 1. [Getting started](https://nbviewer.jupyter.org/github/simsurace/FeedbackParticleFilters.jl/blob/master/notebooks/Getting_started.ipynb)
 2. Gain estimation using the [semigroup method](https://nbviewer.jupyter.org/github/simsurace/FeedbackParticleFilters.jl/blob/master/notebooks/Gain_semigroup.ipynb)
+3. [Harmonic oscillator example](https://nbviewer.jupyter.org/github/simsurace/FeedbackParticleFilters.jl/blob/master/notebooks/Harmonic_oscillator.ipynb)
 
 ## Documentation
 

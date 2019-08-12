@@ -78,6 +78,6 @@ end
 
 
 
-mean(ens) = Statistics.mean(ens.positions, dims=2)
-cov(ens)  = Statistics.cov(ens.positions, dims=2, corrected=false)
-var(ens)  = Statistics.var(ens.positions, dims=2, corrected=false)
+mean(ens::UnweightedParticleEnsemble) = Statistics.mean(ens.positions, dims=2)
+cov(ens::UnweightedParticleEnsemble)  = Statistics.cov(ens.positions, dims=2, corrected=false)
+var(ens::UnweightedParticleEnsemble)  = Statistics.var(ens.positions, dims=2, corrected=false)

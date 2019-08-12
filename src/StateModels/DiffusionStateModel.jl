@@ -16,6 +16,7 @@ struct DiffusionStateModel{S, F1, F2, TI} <: HiddenStateModel{Vector{S}, Continu
     function DiffusionStateModel(f::Function, g::Function, init::TI) where TI<:Union{Distributions.Sampleable, Any}
         if init isa Distributions.Sampleable 
             x = rand(init)
+            x isa Vector || (x = [x])
         else
             x = init
         end
@@ -86,7 +87,15 @@ initial_condition(model::DiffusionStateModel) = model.init
                         
 state_dim(model::DiffusionStateModel) = model.n
 noise_dim(model::DiffusionStateModel) = model.m
-initialize(model::DiffusionStateModel{T, F1, F2, TI}) where {T, F1, F2, TI<:Distributions.Sampleable}      = rand(model.init)
+function initialize(model::DiffusionStateModel{T, F1, F2, TI}) where {T, F1, F2, TI<:Distributions.Sampleable}
+    x = rand(model.init)
+    if x isa Vector
+        return x
+    else
+        return [x]
+    end
+end
+                            
 initialize(model::DiffusionStateModel{T, F1, F2, TI}) where TI<:AbstractVector{T} where {T, F1, F2}        = model.init
                 
                 
@@ -221,47 +230,11 @@ end
 ################################
 ### CONVENIENCE CONSTRUCTORS ###
 ################################
-
-struct ContinuousMultiFromUnivariateDistribution{T<:ContinuousUnivariateDistribution} <: ContinuousMultivariateDistribution
-    distr::T
-end                  
-                        
-import Base.length
-import Base.eltype
-                        
-length(d::ContinuousMultiFromUnivariateDistribution) = 1
-eltype(d::ContinuousMultiFromUnivariateDistribution) = Array{eltype(d.distr), 1}
-                        
-import Distributions._rand!
-                        
-function _rand!(rng::Random.AbstractRNG, d::ContinuousMultiFromUnivariateDistribution, x::AbstractVector)
-    x[1] = rand(rng, d.distr)
-end
-                        
-function _rand!(rng::Random.AbstractRNG, d::ContinuousMultiFromUnivariateDistribution, x::AbstractMatrix)
-    for i in size(x,2)
-        x[1,i] = rand(rng, d.distr)
-    end
-end
-                        
-function _rand!(rng::Random.AbstractRNG, d::ContinuousMultiFromUnivariateDistribution, x::AbstractVector{Vector{T}}) where T
-    for i in length(x)
-        _rand!(rng, d, x[i])
-    end
-end
-                        
-import Distributions._logpdf
-function _logpdf(d::ContinuousMultiFromUnivariateDistribution, x::AbstractVector)
-    logpdf(d.distr, x[1])
-end
-                        
-function _logpdf(d::ContinuousMultiFromUnivariateDistribution, x::AbstractMatrix)
-    [logpdf(d.distr, x[1,i]) for i in size(x,2)]
-end                        
-                        
+        
 function ScalarDiffusionStateModel(f::Function, g::Function, init::ContinuousUnivariateDistribution)
-    F(x) = [f(x)]
-    G(x) = g(x)*ones(1,1)
-    INIT = ContinuousMultiFromUnivariateDistribution(init)
-    return DiffusionStateModel(F, G, INIT)
+    F(x::AbstractVector) = [f(x[1])]
+    F(x::AbstractMatrix) = mapslices(F, x, dims=1)
+    G(x::AbstractVector) = g(x[1])*ones(1,1)
+    G(x::AbstractMatrix) = permutedims(repeat(mapslices(y->g(y[1]), x, dims=1), 1, 1, 1), [1,3,2])
+    return DiffusionStateModel(F, G, init)
 end

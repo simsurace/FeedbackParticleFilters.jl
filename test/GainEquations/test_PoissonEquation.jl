@@ -1,4 +1,4 @@
-using FeedbackParticleFilters, StatsBase
+using FeedbackParticleFilters, Statistics
 
 println("Testing PoissonEquation.jl:")
 
@@ -7,7 +7,7 @@ println("Testing PoissonEquation.jl:")
     h(x)      = 2x[1:2]
     pos       = randn(3, 10)
     H         = randn(2, 10)
-    mean_H    = StatsBase.mean(H, dims=2)
+    mean_H    = Statistics.mean(H, dims=2)
     potential = zeros(2, 10)
     gain      = zeros(3, 10, 2);
     
@@ -46,7 +46,7 @@ println("Testing PoissonEquation.jl:")
     print(".")
     @test eq2.H == 2*pos[1:2, :]
     print(".")
-    @test eq2.mean_H == StatsBase.mean(eq2.H, dims=2)
+    @test eq2.mean_H == Statistics.mean(eq2.H, dims=2)
     ens = UnweightedParticleEnsemble(pos)
     eq3 = PoissonEquation(h, ens)
     print(".")
@@ -79,7 +79,7 @@ println("Testing PoissonEquation.jl:")
     print(".")
     @test eq.H == 2*pos[1:2, :]
     print(".")
-    @test eq.mean_H == StatsBase.mean(eq.H, dims=2)
+    @test eq.mean_H == Statistics.mean(eq.H, dims=2)
     pos = randn(3, 10)
     update!(eq, pos)
     print(".")
@@ -87,7 +87,7 @@ println("Testing PoissonEquation.jl:")
     print(".")
     @test eq.H == 2*pos[1:2, :]
     print(".")
-    @test eq.mean_H == StatsBase.mean(eq.H, dims=2)
+    @test eq.mean_H == Statistics.mean(eq.H, dims=2)
     pos = randn(3, 10)
     ens = UnweightedParticleEnsemble(pos)
     update!(eq, ens)
@@ -96,7 +96,7 @@ println("Testing PoissonEquation.jl:")
     print(".")
     @test eq.H == 2*pos[1:2, :]
     print(".")
-    @test eq.mean_H == StatsBase.mean(eq.H, dims=2)
+    @test eq.mean_H == Statistics.mean(eq.H, dims=2)
     println("DONE.")
     
     
