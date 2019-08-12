@@ -38,6 +38,9 @@ function run!(simulation::Simulation; records = ())
     out = Array{Any, 2}(undef, length(records), simulation.no_of_timesteps)
     
     for t in 1:simulation.no_of_timesteps
+        if t % 100 == 0
+            print(".")
+        end
         propagate!(sfs, simulation.filt_prob, simulation.filt_algo, simulation.dt)
         for (i,record) in enumerate(records)
             out[i,t] = deepcopy(record(sfs))

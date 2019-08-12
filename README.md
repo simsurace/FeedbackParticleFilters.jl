@@ -1,4 +1,10 @@
 # FeedbackParticleFilters.jl
+![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)<!--
+![Lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)
+![Lifecycle](https://img.shields.io/badge/lifecycle-stable-green.svg)
+![Lifecycle](https://img.shields.io/badge/lifecycle-retired-orange.svg)
+![Lifecycle](https://img.shields.io/badge/lifecycle-archived-red.svg)
+![Lifecycle](https://img.shields.io/badge/lifecycle-dormant-blue.svg) -->
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](http://simsurace.github.io/FeedbackParticleFilters.jl/dev)
 [![Build Status](https://travis-ci.org/simsurace/FeedbackParticleFilters.jl.svg?branch=master)](https://travis-ci.org/simsurace/FeedbackParticleFilters.jl)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -40,8 +46,8 @@ filt_prob   = ContinuousTimeFilteringProblem(state_model, obs_model)
 ```
 Once the filtering problem is defined, an appropriate filtering algorithm can be defined like this:
 ```julia
-method     = ConstantGainApproximation()
-filter     = FPF(filt_prob, method, 100)
+method = ConstantGainApproximation()
+filter = FPF(filt_prob, method, 100)
 ```
 The package comes with methods to automatically simulate a given system:
 ```julia
