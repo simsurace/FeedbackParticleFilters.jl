@@ -1,4 +1,4 @@
-using FeedbackParticleFilters, StatsBase
+using FeedbackParticleFilters, Statistics
 
 println("Testing ConstantGainApproximation.jl:")
 
@@ -16,7 +16,7 @@ println("Testing ConstantGainApproximation.jl:")
     end
     for i in 1:3, j in 1:2
         print(".")
-        @test eq.gain[i,1,j] == StatsBase.mean(eq.positions[i,:] .* (eq.H[j,:] .- eq.mean_H[j,:]))
+        @test eq.gain[i,1,j] == Statistics.mean(eq.positions[i,:] .* (eq.H[j,:] .- eq.mean_H[j,:]))
     end
     println("DONE.")
     
