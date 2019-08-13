@@ -59,9 +59,9 @@ To learn more about how to use this package, please check out some tutorials or 
 ## Tutorials
 
 There are various Jupyter notebooks that explore various key functions of the package:
-1. [Getting started](https://nbviewer.jupyter.org/github/simsurace/FeedbackParticleFilters.jl/blob/master/notebooks/Getting_started.ipynb)
-2. Gain estimation using the [semigroup method](https://nbviewer.jupyter.org/github/simsurace/FeedbackParticleFilters.jl/blob/master/notebooks/Gain_semigroup.ipynb)
-3. [Harmonic oscillator example](https://nbviewer.jupyter.org/github/simsurace/FeedbackParticleFilters.jl/blob/master/notebooks/Harmonic_oscillator.ipynb)
+1. [Getting started](https://github.com/simsurace/FeedbackParticleFilters.jl/blob/master/notebooks/Getting_started.ipynb)
+2. Gain estimation using the [semigroup method](https://github.com/simsurace/FeedbackParticleFilters.jl/blob/master/notebooks/Gain_semigroup.ipynb)
+3. [Harmonic oscillator example](https://github.com/simsurace/FeedbackParticleFilters.jl/blob/master/notebooks/Harmonic_oscillator.ipynb)
 
 ## Documentation
 
