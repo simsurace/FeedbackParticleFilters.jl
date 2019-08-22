@@ -1,4 +1,4 @@
-using FeedbackParticleFilters, Random, Statistics, LinearAlgebra
+using FeedbackParticleFilters, Random, Statistics, LinearAlgebra, Distributions
 
 println("Testing FPF.jl:")
 
@@ -41,7 +41,7 @@ println("Testing FPF.jl:")
     
     print("  method initial_condition")
     print(".")
-    @test initial_condition(fpf) == st_mod.init
+    @test initial_condition(fpf) == [0., 0., 0.]
     println("DONE.")
     
     print("  method no_of_particles")
@@ -85,6 +85,8 @@ println("Testing FPF.jl:")
     state2 = FPFState(fpf)
     print(".")
     @test no_of_particles(state2) == 10
+    print(".")
+    @test state2.ensemble.positions == zeros(3,10)
     filt_prob = FilteringProblem(st_mod, ob_mod)
     state3 = FPFState(filt_prob, 20)
     print(".")
@@ -95,6 +97,44 @@ println("Testing FPF.jl:")
     fpf2 = FPF(filt_prob, method, 100)
     print(".")
     @test no_of_particles(fpf2) == 100
+    println("DONE.")
+    
+    print("  method initialize")
+    state4 = initialize(fpf)
+    print(".")
+    @test state4 isa FPFState
+    print(".")
+    @test state4.ensemble.positions == zeros(3,10)
+    println("DONE.")
+    
+    print("  method assimilate!")
+    function FeedbackParticleFilters.solve!(eq::PoissonEquation, method::DummyMethod)
+        eq.gain .= ones(size(eq.gain))
+    end
+    
+    init   = MvNormal(3, 1.)
+    st_mod = DiffusionStateModel(f, g, init)
+    ob_mod = DiffusionObservationModel{Float64, Float64, typeof(h)}(3, 2, h)
+    method = DummyMethod()
+    fpf    = FPF(st_mod, ob_mod, method, 10)
+    state  = initialize(fpf)
+    
+    oldstate = deepcopy(state)
+    solve!(oldstate.eq, method)
+    print(".")
+    @test oldstate.eq.gain == ones(3,10,2) # test DummyMethod
+    
+    assimilate!([0.01, -0.02], state, fpf, 0.01)
+    print(".")
+    @test state.eq.gain == ones(3,10,2)
+    
+    for i in 1:10
+        print(".")
+        @test state.ensemble.positions[:,i] ≈ oldstate.ensemble.positions[:,i] + ones(3,2) * ([0.01, -0.02] - 0.01*oldstate.eq.H[:,i]/2 - 0.01*oldstate.eq.mean_H[:,1]/2)
+    end
+    
+    print(".")
+    @test state.eq.positions == state.ensemble.positions
     println("DONE.")
     
 end; #FPF.jl
