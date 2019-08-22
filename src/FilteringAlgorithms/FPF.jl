@@ -8,14 +8,14 @@ struct FPFState{T, TF} <: AbstractFilterState
 end
 
 
-struct FPF{TS<:HiddenStateModel, TO<:ObservationModel, T<:GainEstimationMethod, TI<:FPFState} <: AbstractFilteringAlgorithm{ContinuousTime, ContinuousTime}
+struct FPF{TS<:HiddenStateModel, TO<:ObservationModel, T<:GainEstimationMethod} <: AbstractFilteringAlgorithm{ContinuousTime, ContinuousTime}
     state_model::TS
     obs_model::TO
     gain_method::T
-    init::TI
-    function FPF(st_mod::HiddenStateModel{S1, ContinuousTime}, ob_mod::ObservationModel{S1, S2, ContinuousTime}, gain_method::GainEstimationMethod, init::FPFState) where {S1, S2}
+    N::Int
+    function FPF(st_mod::HiddenStateModel{S1, ContinuousTime}, ob_mod::ObservationModel{S1, S2, ContinuousTime}, gain_method::GainEstimationMethod, N::Int) where {S1, S2}
         if ob_mod isa DiffusionObservationModel || ob_mod isa LinearDiffusionObservationModel
-            return new{typeof(st_mod), typeof(ob_mod), typeof(gain_method), typeof(init)}(st_mod, ob_mod, gain_method, init)
+            return new{typeof(st_mod), typeof(ob_mod), typeof(gain_method)}(st_mod, ob_mod, gain_method, N)
         else
             error("Error: the FPF algorithm is not defined for non-diffusion-type observations. Try ppFPF for counting process observations.")
         end
@@ -31,8 +31,8 @@ end
 ###### METHODS ######
 #####################  
     
-initial_condition(fpf::FPF) = fpf.init
-no_of_particles(fpf::FPF) = no_of_particles(fpf.init)
+initial_condition(fpf::FPF) = fpf.state_model.init
+no_of_particles(fpf::FPF) = fpf.N
 no_of_particles(st::FPFState) = no_of_particles(st.ensemble)
 state_model(fpf::FPF) = fpf.state_model
 obs_model(fpf::FPF) = fpf.obs_model
@@ -178,8 +178,6 @@ function FPF(filt_prob::AbstractFilteringProblem, method::GainEstimationMethod, 
     else
         error("Error: cannot build feedback particle filter for given observation model. Must be a diffusion.")
     end
-                            
-    init = FPFState(filt_prob, N)
     
-    return FPF(st_mod, ob_mod, method, init)
+    return FPF(st_mod, ob_mod, method, N)
 end

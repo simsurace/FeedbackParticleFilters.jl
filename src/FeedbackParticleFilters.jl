@@ -227,6 +227,7 @@ include("FilteringAlgorithms/FPF.jl")
 export
     FPF,
     FPFState,
+    gain_estimation_method,
     propagate!, 
     assimilate!,
     gainxerror,
