@@ -18,7 +18,6 @@ makedocs(
              "hidden.md",
              "observation.md",
              "gainest.md",
-             "reference.md",
         ],
     ],
 )
