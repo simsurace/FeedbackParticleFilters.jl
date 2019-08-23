@@ -18,7 +18,7 @@ makedocs(
              "basic.md",
              "hidden.md",
              "observation.md",
-             "algorithms.md"
+             "algorithms.md",
              "gainest.md",
         ],
     ],
