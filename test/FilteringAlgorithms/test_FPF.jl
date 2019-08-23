@@ -17,7 +17,7 @@ println("Testing FPF.jl:")
     
     print("  inner constructor for FPF")
     f(x)   = -x
-    g(x)   = [1., -2., 1.]
+    g(x)   = hcat([1.; -2.; 1.])  
     init   = [0., 0., 0.]
     st_mod = DiffusionStateModel(f, g, init)
     ob_mod = DiffusionObservationModel{Float64, Float64, typeof(h)}(3, 2, h)
@@ -41,7 +41,7 @@ println("Testing FPF.jl:")
     
     print("  method initial_condition")
     print(".")
-    @test initial_condition(fpf) == [0., 0., 0.]
+    @test initial_condition(fpf) ≈ [0., 0., 0.]
     println("DONE.")
     
     print("  method no_of_particles")
@@ -68,17 +68,17 @@ println("Testing FPF.jl:")
     
     print("  method for Statistics.mean")
     print(".")
-    @test Statistics.mean(state) == mean(ens)
+    @test Statistics.mean(state) ≈ mean(ens)
     println("DONE.")
     
     print("  method for Statistics.cov")
     print(".")
-    @test Statistics.cov(state) == cov(ens)
+    @test Statistics.cov(state) ≈ cov(ens)
     println("DONE.")
     
     print("  method for Statistics.var")
     print(".")
-    @test Statistics.var(state) == var(ens)
+    @test Statistics.var(state) ≈ var(ens)
     println("DONE.")
     
     print("  outer constructors for FPFState")
@@ -104,12 +104,12 @@ println("Testing FPF.jl:")
     print(".")
     @test state4 isa FPFState
     print(".")
-    @test state4.ensemble.positions == zeros(3,10)
+    @test state4.ensemble.positions ≈ zeros(3,10)
     println("DONE.")
     
     print("  method assimilate!")
     function FeedbackParticleFilters.solve!(eq::PoissonEquation, method::DummyMethod)
-        eq.gain .= ones(size(eq.gain))
+        eq.gain .= Statistics.mean(eq.positions) * ones(size(eq.gain))
     end
     
     init   = MvNormal(3, 1.)
@@ -122,19 +122,44 @@ println("Testing FPF.jl:")
     oldstate = deepcopy(state)
     solve!(oldstate.eq, method)
     print(".")
-    @test oldstate.eq.gain == ones(3,10,2) # test DummyMethod
+    @test oldstate.eq.gain == Statistics.mean(oldstate.eq.positions) * ones(3,10,2) # test DummyMethod
     
     assimilate!([0.01, -0.02], state, fpf, 0.01)
+    error = [0.01, -0.02] .- 0.01*oldstate.eq.H/2 .- 0.01*oldstate.eq.mean_H/2
+    heun!(oldstate.eq, oldstate.ensemble, error, method)
     print(".")
-    @test state.eq.gain == ones(3,10,2)
-    
-    for i in 1:10
-        print(".")
-        @test state.ensemble.positions[:,i] ≈ oldstate.ensemble.positions[:,i] + ones(3,2) * ([0.01, -0.02] - 0.01*oldstate.eq.H[:,i]/2 - 0.01*oldstate.eq.mean_H[:,1]/2)
-    end
+    @test state.eq.gain ≈ oldstate.eq.gain
     
     print(".")
-    @test state.eq.positions == state.ensemble.positions
+    @test state.eq.positions ≈ state.ensemble.positions
+    println("DONE.")
+    
+    print("  method propagate!")
+    init   = [0., 0., 0.]
+    st_mod = DiffusionStateModel(f, g, init)
+    fpf   = FPF(st_mod, ob_mod, method, 2)
+    state = initialize(fpf)  
+    Random.seed!(0)
+    propagate!(state, fpf, 0.01)
+    print(".")
+    @test state.ensemble.positions ≈ [0.06791074260357777 -0.013485387193052173; -0.1656826965800072 -0.11732341492662196; -0.03530074003005963 0.029733585084941616]
+    println("DONE.")
+    
+    print("  method update!")
+    init   = [0., 0., 0.]
+    st_mod = DiffusionStateModel(f, g, init)
+    fpf    = FPF(st_mod, ob_mod, method, 2)
+    state  = initialize(fpf) 
+    state2 = initialize(fpf)
+    Random.seed!(0)
+    update!(state, fpf, [0.01, -0.02], 0.01)
+    Random.seed!(0)
+    propagate!(state2, fpf, 0.01)
+    assimilate!([0.01, -0.02], state2, fpf, 0.01)
+    print(".")
+    @test state.ensemble.positions ≈ state2.ensemble.positions
+    print(".")
+    @test state.eq.gain ≈ state2.eq.gain
     println("DONE.")
     
 end; #FPF.jl

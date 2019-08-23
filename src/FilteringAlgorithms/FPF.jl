@@ -26,6 +26,7 @@ end
 
     
     
+ 
     
 #####################
 ###### METHODS ######
@@ -57,10 +58,6 @@ end
 
 
 
-
-
-
-
 ######################
 ### MAIN ALGORITHM ###
 ######################
@@ -79,39 +76,44 @@ function propagate!(filter_state::FPFState, filt_algo::FPF, dt)
 end
 
 function assimilate!(dY, filter_state::FPFState, filt_algo::FPF, dt)
-    ensemble = filter_state.ensemble
-    eq       = filter_state.eq
-    method   = filt_algo.gain_method
+    ensemble  = filter_state.ensemble
+    eq        = filter_state.eq
+    method    = filt_algo.gain_method
     
-    error    = dY .- dt * eq.H/2 .- dt * eq.mean_H/2
+    error     = dY .- dt * eq.H/2 .- dt * eq.mean_H/2
     solve!(eq, method)
+    
+    heun!(eq, ensemble, error, method) # stochastic Heun method: intermediate step
+        
     applygain!(ensemble, eq, error)
     update!(eq, ensemble)
     return ensemble.positions
 end
 
 
+
     
     
     
     
     
-    
-    
-    
-    
-    
+      
 ########################
 ### HELPER FUNCTIONS ###
 ########################
+    
+function heun!(eq::PoissonEquation, ensemble::UnweightedParticleEnsemble, error::AbstractMatrix, method::GainEstimationMethod)
+    ensemble2 = deepcopy(ensemble)    
+    applygain!(ensemble2, eq, error)
+    eq2       = deepcopy(eq)
+    update!(eq2, ensemble2)
+    solve!(eq2, method)
+    eq.gain  .= (eq.gain + eq2.gain) / 2
+end    
 
 function gainxerror(gain::Array{T, 3}, error::Array{T, 2}) where T
-    size(gain, 2) == size(error, 2) ? N = size(gain, 2) : throw(DimensionMismatch("The provided gain and error are for different numbers of particles."))
-    size(gain, 3) == size(error, 1) ? m = size(gain, 3) : throw(DimensionMismatch("The provided gain and error are for different numbers of observed variables."))
     out = zeros(T, size(gain, 1), size(gain, 2))
-    @inbounds for k in 1:N, i in 1:size(gain, 1), j in 1:m
-            out[i, k] += gain[i, k, j] * error[j, k]
-    end
+    add_gainxerror!(out, gain, error)
     return out
 end
 

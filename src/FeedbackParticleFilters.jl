@@ -230,6 +230,7 @@ export
     gain_estimation_method,
     propagate!, 
     assimilate!,
+    heun!,
     gainxerror,
     add_gainxerror!,
     applygain!
