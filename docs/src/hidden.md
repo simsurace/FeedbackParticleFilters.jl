@@ -5,7 +5,12 @@ CurrentModule = FeedbackParticleFilters
 ```
 
 ```@docs
-StateModel
+HiddenStateModel
+state_dim
+state_type
+time_type
+initial_condition
+initialize
 propagate!
 ```
 
@@ -21,5 +26,5 @@ LinearDiffusionStateModel
 ScalarDiffusionStateModel
 drift_function
 diffusion_function
-initial_condition
+noise_dim
 ```

@@ -1,7 +1,7 @@
 @doc raw"""
-    LinearDiffusionStateModel(f::Function, g::Function; init)
+    LinearDiffusionStateModel(A, B; init)
 
-A diffusion process hidden state model ``dX_t = f(X_t)dt + g(X_t)dW_t``, where f is the `drift_function`, g is the `observation_function`, X_t is the `n`-dimensional hidden state at time t, and W_t is an `m`-dimensional Brownian motion process.
+Returns a linear diffusion process hidden state model ``dX_t = A X_t dt + B dW_t`` with appropriately sized matrices ``A`` and ``B``.
 
 Optional argument `init` stands for the initial condition of the process, which is either
 * A vector of length `n` for a fixed (deterministic) initial condition

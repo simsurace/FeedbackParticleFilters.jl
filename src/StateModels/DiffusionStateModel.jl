@@ -1,7 +1,7 @@
 @doc raw"""
     DiffusionStateModel(f::Function, g::Function, init)
 
-A diffusion process hidden state model ``dX_t = f(X_t)dt + g(X_t)dW_t``, where f is the `drift_function`, g is the `observation_function`, X_t is the `n`-dimensional hidden state at time t, and W_t is an `m`-dimensional Brownian motion process.
+Returns a diffusion process hidden state model ``dX_t = f(X_t)dt + g(X_t)dW_t``, where ``f`` is the `drift_function`, ``g`` is the `observation_function`, ``X_t`` is the ``n``-dimensional hidden state at time ``t``, and ``W_t`` is an ``m``-dimensional Brownian motion process.
 
 Argument `init` stands for the initial condition of the process, which is either
 * A vector of length `n` for a fixed (deterministic) initial condition
@@ -52,17 +52,16 @@ end
                 
                 
      
-                       
+
+                
+                
+                
+                
+                
 #####################
 ### BASIC METHODS ###
 #####################
-                
-                
-                
-                
-                
-                
-
+            
 function drift(model::DiffusionStateModel)
     if hasmethod(model.drift_function, Tuple{AbstractMatrix})
         return model.drift_function
@@ -86,6 +85,14 @@ end
 initial_condition(model::DiffusionStateModel) = model.init
                         
 state_dim(model::DiffusionStateModel) = model.n
+                   
+                        
+        
+"""
+    noise_dim(model)
+
+Returns the dimension of the Brownian motion ``W_t`` in the diffusion model ``dX_t = f(X_t)dt + g(X_t)dW_t``.
+"""                        
 noise_dim(model::DiffusionStateModel) = model.m
 function initialize(model::DiffusionStateModel{T, F1, F2, TI}) where {T, F1, F2, TI<:Distributions.Sampleable}
     x = rand(model.init)
@@ -98,11 +105,24 @@ end
                             
 initialize(model::DiffusionStateModel{T, F1, F2, TI}) where TI<:AbstractVector{T} where {T, F1, F2}        = model.init
                 
-                
-                
-                
-                
+   
+                            
+                            
+"""
+    drift_function(model)
+
+Returns the drift function ``f`` of the diffusion model ``dX_t = f(X_t)dt + g(X_t)dW_t``.
+"""                
 drift_function(model::DiffusionStateModel)     = drift(model)
+                            
+                            
+                            
+
+"""
+    diffusion_function(model)
+
+Returns the diffusion function ``g`` of the diffusion model ``dX_t = f(X_t)dt + g(X_t)dW_t``.
+"""                            
 diffusion_function(model::DiffusionStateModel) = diffusion(model)
         
 
@@ -230,7 +250,12 @@ end
 ################################
 ### CONVENIENCE CONSTRUCTORS ###
 ################################
-        
+                            
+@doc raw"""
+    ScalarDiffusionStateModel(f::Function, g::Function, init)
+
+Returns a scalar diffusion process hidden state model ``dX_t = f(X_t)dt + g(X_t)dW_t``.
+"""                            
 function ScalarDiffusionStateModel(f::Function, g::Function, init::ContinuousUnivariateDistribution)
     F(x::AbstractVector) = [f(x[1])]
     F(x::AbstractMatrix) = mapslices(F, x, dims=1)

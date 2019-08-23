@@ -1,9 +1,19 @@
+"""
+    GainEquation
+
+Abstract type for a container representing a gain (vector field).
+"""
 abstract type GainEquation end
+
+
+
+
+"""
+    GainEstimationMethod
+
+Abstract type for a method used to solve an equation of `GainEquation` type.
+"""
 abstract type GainEstimationMethod end
-
-
-
-
 
 
 
@@ -21,7 +31,7 @@ function solve!(eq::GainEquation, method::GainEstimationMethod) end
 """
     update!(eq::GainEquation)
 
-Updates the gain equation `eq`.
+Updates the gain equation `eq` such that all information contained in it is self-consistent.
 
     update!(eq::GainEquation, ens::ParticleRepresentation)
 

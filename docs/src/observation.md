@@ -6,6 +6,9 @@ CurrentModule = FeedbackParticleFilters
 
 ```@docs
 ObservationModel
+obs_dim
+obs_type
+time_type
 emit!
 ```
 
