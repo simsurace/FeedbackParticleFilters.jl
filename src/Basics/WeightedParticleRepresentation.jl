@@ -28,12 +28,32 @@ list_of_weights(ens::WeightedParticleRepresentation) = [get_weight(ens, i) for i
 
 
 
+"""
+    sum_of_weights(ensemble::WeightedParticleRepresentation)
+
+Return the sum of the importance weights in `ensemble`.
+"""
+function sum_of_weights(ens::WeightedParticleRepresentation) end
+
+
+
+
+"""
+    resample!(ensemble::WeightedParticleRepresentation)
+
+Resample the positions by drawing a weighted sample with replacement.
+"""
+function resample!(ens::WeightedParticleRepresentation) end
+
+
+
+
 function eff_no_of_particles(ensemble::WeightedParticleRepresentation)
     sum = 0.
     @inbounds for i in 1:no_of_particles(ensemble)
-        sum += get_weight(ensemble, i)^2
+        sum += get_weight(ensemble, i).^2
     end
-    return 1/sum
+    return sum_of_weights(ensemble)^2/sum
 end
 
 

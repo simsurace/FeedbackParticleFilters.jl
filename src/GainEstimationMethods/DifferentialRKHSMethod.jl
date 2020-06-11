@@ -1,6 +1,5 @@
-
 """
-    DifferentialRKHSMethod1d(epsilon, lambda)
+    DifferentialRKHSMethod(epsilon, lambda)
 
 Differential loss reproducing kernel Hilbert space (RKHS) method from [1], Section III.
 
@@ -19,9 +18,9 @@ struct DifferentialRKHSMethod <: GainEstimationMethod
 end
 
 
-# Helper functions for DifferentialRKHSMethod1d
+# Helper functions for DifferentialRKHSMethod
 function DifferentialRKHS_MakeMatrices(vec::AbstractVector, eps::Number)
-    # constructs kernel matrices for DifferentialRKHSMethod1d
+    # constructs kernel matrices for DifferentialRKHSMethod
     L = length(vec)
     eps1 = 2*eps
     eps2 = eps^2
@@ -33,10 +32,10 @@ function DifferentialRKHS_MakeMatrices(vec::AbstractVector, eps::Number)
                 mat[i,i,3] = 1/eps
                 @simd for j in i+1:L
                     diff = vec[j] - vec[i]
-                    sq = diff*diff
-                    K = exp(-sq/eps1)
-                    Kx = diff*K/eps
-                    Kxy = (eps - sq) * K / eps2
+                    sq   = diff*diff
+                    K    = exp(-sq/eps1)
+                    Kx   = diff*K/eps
+                    Kxy  = (eps - sq) * K / eps2
                     mat[i,j,1] = mat[j,i,1] = K
                     mat[i,j,2] = Kx
                     mat[j,i,2] = -Kx
@@ -49,13 +48,14 @@ end
 
 
 
-function DifferentialRKHS_M_and_b!(A::AbstractMatrix, B::AbstractMatrix, C::AbstractMatrix, v::AbstractVector, lamb::Number)
-    # constructs matrix M and vector b for DifferentialRKHSMethod1d
+function DifferentialRKHS_M_and_b!(A::AbstractMatrix, B::AbstractMatrix, C::AbstractMatrix, v::AbstractMatrix, lamb::Number)
+    # constructs matrix M and vector b for DifferentialRKHSMethod
     L = size(A,1)
+    m = size(v,2)
 
-    b = zeros(Float64, 2*L)
-    LinearAlgebra.mul!(view(b,   1:L  ), A, v)
-    LinearAlgebra.mul!(view(b, L+1:2*L), B, v)
+    b = zeros(Float64, 2*L, m)
+    LinearAlgebra.mul!(view(b,   1:L  , :), A, v)
+    LinearAlgebra.mul!(view(b, L+1:2*L, :), B, v)
 
 
     B2 = B*B
@@ -80,23 +80,23 @@ end
 
 
 function solve!(eq::PoissonEquation, method::DifferentialRKHSMethod)
-    eps = method.epsilon
-    N = no_of_particles(eq)
+    eps  = method.epsilon
+    N    = no_of_particles(eq)
     lamb = N * method.lambda
 
-    H = Htilde(eq)[1,:]
+    H = Htilde(eq)
 
     # Gaussian kernel and partial derivative matrices
     K, Kx, Kxy = DifferentialRKHS_MakeMatrices(eq.positions[1,:], eps)
 
     # compute M and b
-    M, b = DifferentialRKHS_M_and_b!(K, Kx, Kxy, H, lamb) # warning: this function multiplies K, Kx, and Kxy by lamb
+    M, b = DifferentialRKHS_M_and_b!(K, Kx, Kxy, H', lamb) # warning: this function multiplies K, Kx, and Kxy by lamb
 
     # solve linear system
     beta = M \ b
 
     # write potential and gain
-    eq.potential[1,:] = ( K*view(beta, 1:N) - Kx*view(beta, N+1:2*N) ) / lamb
+    eq.potential  .= ( K*view(beta, 1:N) - Kx*view(beta, N+1:2*N) )' / lamb
     broadcast!(-, eq.potential, eq.potential, Statistics.mean(eq.potential, dims=2))
-    eq.gain[1,:,1] = ( Kx * view(beta, 1:N) + Kxy * view(beta, N+1:2*N) ) / lamb
+    eq.gain[1,:,:] = ( Kx * view(beta, 1:N, :) + Kxy * view(beta, N+1:2*N, :) ) / lamb
 end

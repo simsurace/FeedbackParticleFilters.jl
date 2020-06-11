@@ -5,6 +5,8 @@ using Distributions
 using Statistics
 using Random
 using PDMats
+using ProgressMeter
+using StatsBase
 
 import Statistics.mean
 import Statistics.cov
@@ -92,8 +94,10 @@ export
     WeightedParticleRepresentation,
     get_weight,
     list_of_weights,
+    sum_of_weights,
     eff_no_of_particles,
-    dim
+    dim,
+    resample!
 
 include("Basics/GainEstimation.jl")
 export
@@ -107,6 +111,11 @@ export
 include("Basics/FilteringProblem.jl")
 export
     FilteringProblem
+
+include("Basics/ParticleFlow.jl")
+export
+    ParticleFlowMethod,
+    flow!
 
 
 
@@ -138,6 +147,11 @@ export
     state_dim,
     noise_dim
 
+include("StateModels/BrownianMotionTorus.jl")
+export
+    BrownianMotionTorus,
+    BrownianMotionCircle
+
 
 
 ####################################
@@ -165,6 +179,16 @@ export
     noise_dim,
     observation_function
 
+include("ObservationModels/CountingObservationModel.jl")
+export
+    CountingObservationModel,
+    initial_condition,
+    drift,
+    state_dim,
+    obs_dim,
+    noise_dim,
+    observation_function
+
 
 
 ####################################
@@ -179,6 +203,10 @@ export
 include("FilterRepresentations/UnweightedParticleEnsemble.jl")
 export
     UnweightedParticleEnsemble
+
+include("FilterRepresentations/WeightedParticleEnsemble.jl")
+export
+    WeightedParticleEnsemble
 
 
 
@@ -201,6 +229,10 @@ include("GainEstimationMethods/ConstantGainApproximation.jl")
 export
     ConstantGainApproximation
 
+include("GainEstimationMethods/ConstantGainEKSPF.jl")
+export
+    ConstantGainEKSPF
+
 include("GainEstimationMethods/SemigroupMethod.jl")
 export
     SemigroupMethod
@@ -208,6 +240,10 @@ export
 include("GainEstimationMethods/DifferentialRKHSMethod.jl")
 export
     DifferentialRKHSMethod
+
+include("GainEstimationMethods/DifferentialRKHSMethodS1.jl")
+export
+    DifferentialRKHSMethodS1
 
 
 
@@ -222,6 +258,13 @@ export
     KBState,
     initialize
 
+# Bootstrap Particle Filter
+include("FilteringAlgorithms/BPF.jl")
+export
+    BPF,
+    BPFState,
+    update_weights!
+
 # Feedback Particle Filter (original)
 include("FilteringAlgorithms/FPF.jl")
 export
@@ -235,6 +278,21 @@ export
     add_gainxerror!,
     applygain!
 
+# Ensemble Kushner-Stratonovich-Poisson Filter (Venugopal et al.)
+include("FilteringAlgorithms/EKSPF.jl")
+export
+    EKSPF,
+    EKSPFState,
+    propagate!, 
+    assimilate!
+
+# Point-process Feedback Particle Filter
+include("FilteringAlgorithms/ppFPF.jl")
+export
+    ppFPF,
+    ppFPFState,
+    propagate!, 
+    assimilate!
 
 
 ####################################
@@ -260,6 +318,14 @@ export
     cond_var,
     propagate!
 
+
+####################################
+###### PARTICLE FLOW METHODS #######
+####################################
+
+include("ParticleFlowMethods/DeterministicFlow.jl")
+export
+    DeterministicFlow
 
 
 end # module

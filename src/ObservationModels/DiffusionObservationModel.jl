@@ -70,9 +70,9 @@ end
 
 function (model::DiffusionObservationModel{S1, S2, TF})(x::AbstractVector{S1}, dt) where {S1, S2, TF}
     dV = randn(S1, noise_dim(model))
-    return drift(model)(x) * dt + dV * sqrt(dt)
+    h  = observation_function(model)
+    return h(x) * dt + dV * sqrt(dt)
 end
-
 
 
 
@@ -80,9 +80,9 @@ end
 
 function (model::DiffusionObservationModel)(x::AbstractMatrix{T}, dt) where T
     dV = randn(T, noise_dim(model), size(x, 2))
+    h  = observation_function(model)
     return mapslices(h, x, dims=1) * dt + dV * sqrt(dt)
 end
-
 
 
 
