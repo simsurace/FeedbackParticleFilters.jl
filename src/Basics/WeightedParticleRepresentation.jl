@@ -58,4 +58,4 @@ end
 
 
 
-dim(ensemle::WeightedParticleRepresentation) = (particle_dim(ensemble) + 1) * no_of_particles(ensemble)
+dim(ensemble::WeightedParticleRepresentation) = (particle_dim(ensemble) + 1) * no_of_particles(ensemble)

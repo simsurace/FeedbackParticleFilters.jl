@@ -58,6 +58,7 @@ end
     println("")
     include("FilterRepresentations/test_MultivariateGaussian.jl")
     include("FilterRepresentations/test_UnweightedParticleEnsemble.jl")
+    include("FilterRepresentations/test_WeightedParticleEnsemble.jl")
 end
 
 

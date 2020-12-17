@@ -38,7 +38,7 @@ get_pos(ens::WeightedParticleEnsemble, i) = view(ens.positions, :, i)
 
 
 
-get_weight(ens::WeightedParticleEnsemble, i) = view(ens.weights, i)
+get_weight(ens::WeightedParticleEnsemble, i) = ens.weights[i]
 
 
 
