@@ -78,8 +78,10 @@ end
     printstyled("Gain estimation methods", bold=true)
     println("")
     include("GainEstimationMethods/test_ConstantGainApproximation.jl")
+    include("GainEstimationMethods/test_ConstantGainEKSPF.jl")
     include("GainEstimationMethods/test_SemigroupMethod.jl")
     include("GainEstimationMethods/test_DifferentialRKHSMethod.jl")
+    include("GainEstimationMethods/test_DifferentialRKHSMethodS1.jl")
 end
 
 
