@@ -38,7 +38,7 @@ no_of_particles(ens::UnweightedParticleEnsemble) = size(ens.positions, 2)
 
 
 
-get_pos(ens::UnweightedParticleEnsemble{T}, i) where T<:AbstractMatrix = view(ens.positions, :, i)
+get_pos(ens::UnweightedParticleEnsemble, i) = view(ens.positions, :, i)
 
 
 
