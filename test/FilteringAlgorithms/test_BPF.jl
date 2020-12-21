@@ -125,7 +125,7 @@ println("Testing BPF.jl:")
     st_mod   = DiffusionStateModel(f, g, init)
     ob_mod   = DiffusionObservationModel{Float64, Float64, typeof(h)}(3, 2, h)
     N        = 10
-    alpha    = 0.5
+    alpha    = 0.
     filter   = BPF(st_mod, ob_mod, N, alpha)
     dY       = [0.1, 0.2]
     dt       = 0.01
@@ -134,14 +134,22 @@ println("Testing BPF.jl:")
     @test state.ensemble.positions == oldstate.ensemble.positions
     print(".")
     @test state.ensemble.weights != oldstate.ensemble.weights
+    
+    h(x)     = [x[1]^2, x[2]^2]
+    ob_mod   = CountingObservationModel{Float64, Float64, typeof(h)}(3, 2, h)
+    filter   = BPF(st_mod, ob_mod, N, alpha)
+    dN       = [1, 0]
+    dt       = 0.01
+    state    = BPFState(ens)
+    oldstate = deepcopy(state)
+    assimilate!(dN, state, filter, dt)
+    print(".")
+    @test state.ensemble.positions == oldstate.ensemble.positions
+    print(".")
+    @test state.ensemble.weights != oldstate.ensemble.weights
     println("DONE.")
     
     print("  method update!")
-    init   = [0., 0., 0.]
-    st_mod = DiffusionStateModel(f, g, init)
-    N      = 10
-    alpha  = 0.5
-    filter = BPF(st_mod, ob_mod, N, alpha)
     state  = initialize(filter) 
     state2 = initialize(filter)
     Random.seed!(0)
