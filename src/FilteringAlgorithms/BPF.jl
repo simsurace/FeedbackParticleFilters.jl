@@ -56,25 +56,25 @@ function initialize(filter::BPF)
     return BPFState(filter)
 end    
 
-function update!(filter_state::BPFState, filt_algo::BPF, dY, dt)
-    propagate!(filter_state, filt_algo, dt)
-    assimilate!(dY, filter_state, filt_algo, dt)
-end
-
 function propagate!(filter_state::BPFState, filt_algo::BPF, dt)
     propagate!(filter_state.ensemble, state_model(filt_algo), dt)
 end
 
-function assimilate!(dN, filter_state::BPFState, filt_algo::BPF, dt)
+function assimilate!(observation, filter_state::BPFState, filt_algo::BPF, dt)
     ensemble  = filter_state.ensemble
     
-    update_weights!(ensemble, obs_model(filt_algo), dN, dt)
+    update_weights!(ensemble, obs_model(filt_algo), observation, dt)
 
     if eff_no_of_particles(ensemble) < filt_algo.alpha * no_of_particles(ensemble)
         resample!(ensemble)
     end
 
     return ensemble.positions
+end
+
+function update!(filter_state::BPFState, filt_algo::BPF, dY, dt)
+    propagate!(filter_state, filt_algo, dt)
+    assimilate!(dY, filter_state, filt_algo, dt)
 end
 
 
@@ -85,28 +85,31 @@ end
     
     
       
+
+
+
 ########################
 ### HELPER FUNCTIONS ###
 ########################
+
+function update_weights!(ensemble::WeightedParticleEnsemble, model::DiffusionObservationModel, dY, dt)
+    H         = mapslices(observation_function(model), ensemble.positions, dims=1)
+    mean_H    = StatsBase.mean(H, ensemble.weights, dims=2)
     
+    @inbounds for i in 1:no_of_particles(ensemble), j in 1:obs_dim(model)
+        ensemble.weights[i] += ensemble.weights[i] * ( H[j,i] - mean_H[j,1] ) * (dY[j] - mean_H[j,1] * dt)
+    end
+end
+
 function update_weights!(ensemble::WeightedParticleEnsemble, model::CountingObservationModel, dN, dt)
     H         = mapslices(observation_function(model), ensemble.positions, dims=1)
-    #logH      = map(log, H)
     mean_H    = StatsBase.mean(H, ensemble.weights, dims=2)
-    #mean_logH = StatsBase.mean(logH, ensemble.weights, dims=2)
-    
-    #broadcast!(-, H, H, mean_H)
-    #broadcast!(-, logH, logH, mean_logH)
     
     @inbounds for i in 1:no_of_particles(ensemble), j in 1:obs_dim(model)
         ensemble.weights[i] += ensemble.weights[i] * ( H[j,i] - mean_H[j,1] ) * (dN[j] - mean_H[j,1] * dt) / mean_H[j,1]
     end
 end
 
-#H         = mapslices(obs_function(obs_model(filter_algo)), ensemble, dims=1)
-#mean_H    = mean(H, dims=2)
-    
-#ensemble.weights .+= ensemble.weights' * (H .- mean_H)' * (dY - dt * mean_H)
 
 
 
