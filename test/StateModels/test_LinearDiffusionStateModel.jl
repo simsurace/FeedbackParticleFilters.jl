@@ -12,8 +12,6 @@ println("Testing LinearDiffusionStateModel.jl:")
     print("  inner constructor")
     mod = LinearDiffusionStateModel(A, B, init)
     print(".")
-    @test mod isa LinearDiffusionStateModel{Float64,Array{Float64,2},Array{Float64,2},MvNormal{Float64,PDMats.ScalMat{Float64},Distributions.ZeroVector{Float64}}}
-    print(".")
     B2 = zeros(Int, 2, 1)
     B2[2,1] = 2
     @test_throws MethodError LinearDiffusionStateModel(A, B2, init) # wrong element type of B2
