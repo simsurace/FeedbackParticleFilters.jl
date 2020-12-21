@@ -68,6 +68,17 @@ Base.show(io::IO, ens::WeightedParticleEnsemble) = print(io, "Weighted particle 
 
 
 
+function WeightedParticleEnsemble(positions::Matrix)
+    N = size(positions)[2]
+    return WeightedParticleEnsemble(positions, StatsBase.ProbabilityWeights(fill(1/N, N)))
+end
+
+
+
+
+
+
+
 function WeightedParticleEnsemble(model::HiddenStateModel, N::Int)
     return WeightedParticleEnsemble(hcat([initialize(model) for i in 1:N]...), StatsBase.ProbabilityWeights(fill(1/N, N)))
 end
