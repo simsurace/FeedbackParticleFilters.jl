@@ -62,4 +62,18 @@ println("Testing UnweightedParticleEnsemble.jl:")
     @test var(ens)[:,1] == [0.9742140049604432; 0.39598231024579167]
     println("DONE.")
     
+    print("  constructor for identical particles")
+    vec  = [1., 2., 3., 4.]
+    N    = 5
+    ens  = UnweightedParticleEnsemble(vec, N)
+    print(".")
+    @test no_of_particles(ens) == N
+    print(".")
+    @test particle_dim(ens) == length(vec)
+    for i in 1:N
+        print(".")
+        @test get_pos(ens, i) == vec
+    end
+    println("DONE.")
+    
 end; #UnweightedParticleEnsemble.jl
