@@ -1,4 +1,4 @@
-using FeedbackParticleFilters, Distributions, Random, PDMats
+using FeedbackParticleFilters, Distributions, Random, PDMats, FillArrays
 
 println("Testing DiffusionStateModel.jl:")
 
@@ -10,8 +10,6 @@ println("Testing DiffusionStateModel.jl:")
     
     print("  inner constructor")
     mod = DiffusionStateModel(f, g, init)
-    print(".")
-    @test mod isa DiffusionStateModel{Float64,typeof(f),typeof(g),MvNormal{Float64,PDMats.ScalMat{Float64},Distributions.ZeroVector{Float64}}}
     print(".")
     @test_throws BoundsError DiffusionStateModel(f, g, [1., 2.]) # wrong length of initial condition
     print(".")
