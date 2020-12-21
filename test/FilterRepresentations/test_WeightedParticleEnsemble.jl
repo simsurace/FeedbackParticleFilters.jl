@@ -60,21 +60,21 @@ println("Testing WeightedParticleEnsemble.jl:")
     print(".")
     @test size(mean(ens)) == (d, 1)
     print(".")
-    @test mean(ens)[:,1] == [-0.5763499049711248; -0.18267635565605528]
+    @test maximum(abs.(mean(ens)[:,1] - [-0.5763499049711248; -0.18267635565605528])) < 1e-15
     println("DONE.")
     
     print("  method cov")
     print(".")
     @test size(cov(ens)) == (d, d)
     print(".")
-    @test cov(ens) == [0.9378181191314968 0.17476858717998095; 0.17476858717998095 0.23760369813722895]
+    @test maximum(abs.(cov(ens) - [0.9378181191314968 0.17476858717998095; 0.17476858717998095 0.23760369813722895])) < 1e-15
     println("DONE.")
     
     print("  method var")
     print(".")
     @test size(var(ens)) == (d, 1)
     print(".")
-    @test var(ens)[:,1] == [0.9378181191314968; 0.23760369813722895]
+    @test maximum(abs.(var(ens)[:,1] - [0.9378181191314968; 0.23760369813722895])) < 1e-15
     println("DONE.")
     
     print("  method resample!")
