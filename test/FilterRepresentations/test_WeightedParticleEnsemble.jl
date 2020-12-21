@@ -60,7 +60,7 @@ println("Testing WeightedParticleEnsemble.jl:")
     print(".")
     @test size(mean(ens)) == (d, 1)
     print(".")
-    @test mean(ens)[:,1] == [-0.5763499049711248; -0.1826763556560553]
+    @test mean(ens)[:,1] == [-0.5763499049711248; -0.18267635565605528]
     println("DONE.")
     
     print("  method cov")
