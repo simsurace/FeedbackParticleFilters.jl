@@ -92,6 +92,7 @@ end
     println("")
     printstyled("Filtering algorithms", bold=true)
     println("")
+    include("FilteringAlgorithms/test_BPF.jl")
     include("FilteringAlgorithms/test_KBF.jl")
     include("FilteringAlgorithms/test_FPF.jl")
 end
