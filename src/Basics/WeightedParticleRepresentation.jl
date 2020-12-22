@@ -33,7 +33,17 @@ list_of_weights(ens::WeightedParticleRepresentation) = [get_weight(ens, i) for i
 
 Return the sum of the importance weights in `ensemble`.
 """
-function sum_of_weights(ens::WeightedParticleRepresentation) end
+function sum_of_weights(ens::WeightedParticleRepresentation) 
+    sum = 0.
+    for i in 1:no_of_particles(ens)
+        sum += get_weight(ens, i)
+    end
+    return sum
+end
+
+
+
+
 
 
 
