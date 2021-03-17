@@ -6,7 +6,7 @@
 ![Lifecycle](https://img.shields.io/badge/lifecycle-archived-red.svg)
 ![Lifecycle](https://img.shields.io/badge/lifecycle-dormant-blue.svg) -->
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](http://simsurace.github.io/FeedbackParticleFilters.jl/dev)
-[![Build Status](https://travis-ci.org/simsurace/FeedbackParticleFilters.jl.svg?branch=master)](https://travis-ci.org/simsurace/FeedbackParticleFilters.jl)<!--
+[![Build Status](https://travis-ci.com/simsurace/FeedbackParticleFilters.jl.svg?branch=master)](https://travis-ci.com/simsurace/FeedbackParticleFilters.jl)<!--
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)-->
 [![codecov](https://codecov.io/gh/simsurace/FeedbackParticleFilters.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/simsurace/FeedbackParticleFilters.jl)
 
@@ -19,7 +19,7 @@ In particular, the following features are planned to be implemented in FeedbackP
 * A variety of gain estimation methods
 * Automatic filter deployment and simulation of the state and filtering equations
 * Storing of intermediate (trajectory) data from simulation
-* An interface to the powerful solvers from the [DifferentialEquations](https://github.com/JuliaDiffEq/DifferentialEquations.jl) package 
+* An interface to the powerful solvers from the [DifferentialEquations](https://github.com/JuliaDiffEq/DifferentialEquations.jl) package
 
 ## Installation
 
