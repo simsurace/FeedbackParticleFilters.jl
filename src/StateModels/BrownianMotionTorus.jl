@@ -20,10 +20,10 @@ end
 ### BASIC METHODS ###
 #####################
             
-initial_condition(model::BrownianMotionTorus) = Uniform(0,2*pi)
-                        
+initial_condition(model::BrownianMotionTorus) = Uniform(0,2π)
+
 state_dim(model::BrownianMotionTorus) = model.n
-                   
+
                         
         
 """
@@ -74,7 +74,9 @@ end
                 
                 
                 
-(model::BrownianMotionTorus)(x::AbstractVector, dt) = mod2pi(x + sqrt(dt)*randn(eltype(x), noise_dim(model)))
+function (model::BrownianMotionTorus)(x::AbstractVector{T}, dt) where T
+    return mod2pi.(x .+ sqrt(dt) .* randn(T, noise_dim(model)))
+end
 
 
                 
@@ -86,16 +88,11 @@ end
                 
 function (model::BrownianMotionTorus)(x::AbstractMatrix, dt)
     N   = size(x, 2)
-    F   = drift_function(model)(x)
-    G   = diffusion_function(model)(x)
-    if ndims(G) == 2
-        G = repeat(G, 1, 1, N)
-    end
     out = zeros(eltype(x), state_dim(model), N)
     sqr = sqrt(dt)
     @inbounds for b in 1:N
         for a in 1:state_dim(model)
-            out[a,b]  +=  mod2pi( x[a,b]  +  sqr * randn(eltype(x)) )
+            out[a,b] += mod2pi(x[a,b] + sqr * randn(eltype(x)))
         end
     end
     return out
@@ -111,8 +108,8 @@ function propagate!(x::AbstractVector, model::BrownianMotionTorus, dt)
     N   = size(x, 2)
     sqr = sqrt(dt)
     @inbounds for a in 1:state_dim(model)
-            x[a]  +=  sqr * randn(eltype(x))
-            x[a]   =  mod2pi(x[a])
+        x[a] +=  sqr * randn(eltype(x))
+        x[a]  =  mod2pi(x[a])
     end
     return x
 end 
@@ -131,8 +128,8 @@ function propagate!(x::AbstractMatrix, model::BrownianMotionTorus, dt)
     sqr = sqrt(dt)
     @inbounds for b in 1:N
         for a in 1:state_dim(model)
-                x[a,b]  +=  sqr * randn(eltype(x))
-                x[a,b]   =  mod2pi(x[a,b])
+            x[a,b] += sqr * randn(eltype(x))
+            x[a,b]  = mod2pi(x[a,b])
         end
     end
     return x
@@ -152,4 +149,4 @@ end
 ### CONVENIENCE CONSTRUCTORS ###
 ################################
 
-const BrownianMotionCircle = BrownianMotionTorus(1)
+const BrownianMotionCircle() = BrownianMotionTorus(1)

@@ -36,6 +36,7 @@ end
     println("")
     include("StateModels/test_DiffusionStateModel.jl")
     include("StateModels/test_LinearDiffusionStateModel.jl")
+    include("StateModels/test_BrownianMotionTorus.jl")
 end
 
 
