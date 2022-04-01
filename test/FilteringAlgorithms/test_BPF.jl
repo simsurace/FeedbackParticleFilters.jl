@@ -11,6 +11,7 @@ println("Testing BPF.jl:")
     @test state.ensemble == ens
     println("DONE.")
     
+    @testset "constructor" begin
     print("  inner constructor for BPF")
     f(x)   = -x
     g(x)   = hcat([1.; -2.; 1.])  
@@ -29,6 +30,7 @@ println("Testing BPF.jl:")
     @test filter.N == N
     print(".")
     @test filter.alpha == alpha
+        println("DONE.")
     
     print("  method initial_condition")
     print(".")
@@ -96,8 +98,10 @@ println("Testing BPF.jl:")
     print(".")
     @test state4.ensemble.weights == StatsBase.ProbabilityWeights(fill(1/N, N))
     println("DONE.")
+    end
     
     print("  method propagate!")
+    @testset "propagate!" begin
     f(x)     = -x
     g(x)     = hcat([1.; -2.; 1.])  
     h(x)     = [x[1] * x[2], x[2] * x[3]]
@@ -108,59 +112,62 @@ println("Testing BPF.jl:")
     alpha    = 0.5
     filter   = BPF(st_mod, ob_mod, N, alpha)
     state    = initialize(filter)  
-    Random.seed!(0)
-    propagate!(state, filter, 0.01)
+        state1   = deepcopy(state)
+        propagate!(state1, filter, 0.01)
     print(".")
-    @test state.ensemble.positions ≈ [0.06791074260357777 -0.013485387193052173; -0.1656826965800072 -0.11732341492662196; -0.03530074003005963 0.029733585084941616]
+        @test all(state.ensemble.positions .!= state1.ensemble.positions)
+    end
     println("DONE.")
     
     print("  method assimilate!")
-    ens      = WeightedParticleEnsemble(randn(3,10))
-    state    = BPFState(ens)
-    oldstate = deepcopy(state)
-    f(x)     = -x
-    g(x)     = hcat([1.; -2.; 1.])  
-    h(x)     = [x[1] * x[2], x[2] * x[3]]
-    init     = [0., 0., 0.]
-    st_mod   = DiffusionStateModel(f, g, init)
-    ob_mod   = DiffusionObservationModel{Float64, Float64, typeof(h)}(3, 2, h)
-    N        = 10
-    alpha    = 0.
-    filter   = BPF(st_mod, ob_mod, N, alpha)
-    dY       = [0.1, 0.2]
-    dt       = 0.01
-    assimilate!(dY, state, filter, dt)
-    print(".")
-    @test state.ensemble.positions == oldstate.ensemble.positions
-    print(".")
-    @test state.ensemble.weights != oldstate.ensemble.weights
-    
-    h(x)     = [x[1]^2, x[2]^2]
-    ob_mod   = CountingObservationModel{Float64, Float64, typeof(h)}(3, 2, h)
-    filter   = BPF(st_mod, ob_mod, N, alpha)
-    dN       = [1, 0]
-    dt       = 0.01
-    state    = BPFState(ens)
-    oldstate = deepcopy(state)
-    assimilate!(dN, state, filter, dt)
-    print(".")
-    @test state.ensemble.positions == oldstate.ensemble.positions
-    print(".")
-    @test state.ensemble.weights != oldstate.ensemble.weights
-    println("DONE.")
-    
-    print("  method update!")
-    state  = initialize(filter) 
-    state2 = initialize(filter)
-    Random.seed!(0)
-    update!(state, filter, [0.01, -0.02], 0.01)
-    Random.seed!(0)
-    propagate!(state2, filter, 0.01)
-    assimilate!([0.01, -0.02], state2, filter, 0.01)
-    print(".")
-    @test state.ensemble.positions ≈ state2.ensemble.positions
-    print(".")
-    @test state.ensemble.weights ≈ state2.ensemble.weights
-    println("DONE.")
+    @testset "assimilate!" begin
+        ens      = WeightedParticleEnsemble(randn(3,10))
+        state    = BPFState(ens)
+        oldstate = deepcopy(state)
+        f(x)     = -x
+        g(x)     = hcat([1.; -2.; 1.])  
+        h(x)     = [x[1] * x[2], x[2] * x[3]]
+        init     = [0., 0., 0.]
+        st_mod   = DiffusionStateModel(f, g, init)
+        ob_mod   = DiffusionObservationModel{Float64, Float64, typeof(h)}(3, 2, h)
+        N        = 10
+        alpha    = 0.
+        filter   = BPF(st_mod, ob_mod, N, alpha)
+        dY       = [0.1, 0.2]
+        dt       = 0.01
+        assimilate!(dY, state, filter, dt)
+        print(".")
+        @test state.ensemble.positions == oldstate.ensemble.positions
+        print(".")
+        @test state.ensemble.weights != oldstate.ensemble.weights
+        
+        h2(x)     = [x[1]^2, x[2]^2]
+        ob_mod   = CountingObservationModel{Int, Float64, typeof(h2)}(3, 2, h2)
+        filter   = BPF(st_mod, ob_mod, N, alpha)
+        dN       = [1, 0]
+        dt       = 0.01
+        state    = BPFState(ens)
+        oldstate = deepcopy(state)
+        assimilate!(dN, state, filter, dt)
+        print(".")
+        @test state.ensemble.positions == oldstate.ensemble.positions
+        print(".")
+        @test state.ensemble.weights != oldstate.ensemble.weights
+        println("DONE.")
+        
+        print("  method update!")
+        state  = initialize(filter) 
+        state2 = initialize(filter)
+        Random.seed!(0)
+        update!(state, filter, [0.01, -0.02], 0.01)
+        Random.seed!(0)
+        propagate!(state2, filter, 0.01)
+        assimilate!([0.01, -0.02], state2, filter, 0.01)
+        print(".")
+        @test state.ensemble.positions ≈ state2.ensemble.positions
+        print(".")
+        @test state.ensemble.weights ≈ state2.ensemble.weights
+        println("DONE.")
+    end
     
 end; #BPF.jl

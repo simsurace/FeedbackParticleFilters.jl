@@ -56,9 +56,9 @@ println("Testing KBF.jl:")
     @test init2 == init
     init3 = KBState(3)
     print(".")
-    @test init3.gauss.mean == [0.0, 0.0, 0.0]
+    @test iszero(init3.gauss.mean)
     print(".")
-    @test init3.gauss.cov == [0.0 0.0 0.0; 0.0 0.0 0.0; 0.0 0.0 0.0]
+    @test iszero(init3.gauss.cov)
     
     
     
@@ -97,9 +97,9 @@ println("Testing KBF.jl:")
     print(".")
     @test kbf3.CC == CC
     print(".")
-    @test kbf3.init.gauss.mean == [0.0, 0.0]
+    @test iszero(kbf3.init.gauss.mean)
     print(".")
-    @test kbf3.init.gauss.cov == [4.746796851882334 -5.543824348282954e-5; -5.543824348282954e-5 3.3192089048776765]
+    @test kbf3.init.gauss.cov ≈ [4.746796851882334 -5.543824348282954e-5; -5.543824348282954e-5 3.3192089048776765]
     
     kbf4 = KBF(f_prob)
     print(".")
@@ -109,9 +109,9 @@ println("Testing KBF.jl:")
     print(".")
     @test kbf4.CC == CC
     print(".")
-    @test kbf4.init.gauss.mean == [0.0, 0.0]
+    @test iszero(kbf4.init.gauss.mean)
     print(".")
-    @test kbf4.init.gauss.cov == [4.746796851882334 -5.543824348282954e-5; -5.543824348282954e-5 3.3192089048776765]
+    @test kbf4.init.gauss.cov ≈ [4.746796851882334 -5.543824348282954e-5; -5.543824348282954e-5 3.3192089048776765]
     println("DONE.")
     
     print("  method initialize")
@@ -125,9 +125,9 @@ println("Testing KBF.jl:")
     state = deepcopy(kbf3.init)
     update!(state, kbf3, [0.1, 0.2, 0.3], 0.01)
     print(".")
-    @test state.gauss.mean == [6.6454047161483025, 6.638340196214477 ]
+    @test state.gauss.mean ≈ [6.6454047161483025, 6.638340196214477 ]
     print(".")
-    @test state.gauss.cov == [1.5924097544324285 -3.151122632746998; -3.151122632746998 0.12439518287453177]
+    @test state.gauss.cov ≈ [1.5924097544324285 -3.151122632746998; -3.151122632746998 0.12439518287453177]
     println("DONE.")
     
     

@@ -1,4 +1,4 @@
-using FeedbackParticleFilters, Random, Statistics, LinearAlgebra, Distributions
+using FeedbackParticleFilters, Random, Statistics, LinearAlgebra, Distributions, FillArrays
 
 println("Testing FPF.jl:")
 
@@ -112,7 +112,7 @@ println("Testing FPF.jl:")
         eq.gain .= Statistics.mean(eq.positions) * ones(size(eq.gain))
     end
     
-    init   = MvNormal(3, 1.)
+    init   = MvNormal(LinearAlgebra.Diagonal(FillArrays.Fill(1., 3)))
     st_mod = DiffusionStateModel(f, g, init)
     ob_mod = DiffusionObservationModel{Float64, Float64, typeof(h)}(3, 2, h)
     method = DummyMethod()
@@ -137,12 +137,12 @@ println("Testing FPF.jl:")
     print("  method propagate!")
     init   = [0., 0., 0.]
     st_mod = DiffusionStateModel(f, g, init)
-    fpf   = FPF(st_mod, ob_mod, method, 2)
-    state = initialize(fpf)  
-    Random.seed!(0)
-    propagate!(state, fpf, 0.01)
+    fpf    = FPF(st_mod, ob_mod, method, 2)
+    state  = initialize(fpf)
+    state1 = deepcopy(state)
+    propagate!(state1, fpf, 0.01)
     print(".")
-    @test state.ensemble.positions ≈ [0.06791074260357777 -0.013485387193052173; -0.1656826965800072 -0.11732341492662196; -0.03530074003005963 0.029733585084941616]
+    @test all(state.ensemble.positions .!= state1.ensemble.positions)
     println("DONE.")
     
     print("  method update!")
