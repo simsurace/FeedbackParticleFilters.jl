@@ -22,33 +22,33 @@ println("Testing WeightedParticleRepresentation.jl:")
     weights = [0.2, 0.2, 0.2, 0.2, 0.2]
     ens     = TestRep(pos, weights)
     for i in 1:5
-        print(".")
+        print("-")
         @test get_weight(ens, i) == ens.weights[i]
     end
-    println("DONE.")
+    println("DONE")
         
     print("  method list_of_weights")
-    print(".")
+    print("-")
     @test list_of_weights(ens) == weights
-    println("DONE.")
+    println("DONE")
     
     print("  method sum_of_weights")
-    print(".")
+    print("-")
     @test sum_of_weights(ens) == 1.
-    println("DONE.")
+    println("DONE")
     
     print("  method eff_no_of_particles")
-    print(".")
+    print("-")
     @test eff_no_of_particles(ens) ≈ 5
     weights = [1., 0., 0., 0., 0.]
     ens     = TestRep(pos, weights)
-    print(".")
+    print("-")
     @test eff_no_of_particles(ens) ≈ 1
     weights = [.5, .5, 0., 0., 0.]
     ens     = TestRep(pos, weights)
-    print(".")
+    print("-")
     @test eff_no_of_particles(ens) ≈ 2
-    println("DONE.")
+    println("DONE")
     
     
 end #WeightedParticleRepresentation.jl

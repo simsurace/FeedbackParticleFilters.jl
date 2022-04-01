@@ -36,6 +36,7 @@ end
     println("")
     include("StateModels/test_DiffusionStateModel.jl")
     include("StateModels/test_LinearDiffusionStateModel.jl")
+    include("StateModels/test_BrownianMotionTorus.jl")
 end
 
 
@@ -95,6 +96,7 @@ end
     include("FilteringAlgorithms/test_BPF.jl")
     include("FilteringAlgorithms/test_KBF.jl")
     include("FilteringAlgorithms/test_FPF.jl")
+    include("FilteringAlgorithms/test_ppFPF.jl")
 end
 
 

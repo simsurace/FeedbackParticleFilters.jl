@@ -12,18 +12,18 @@ println("Testing FilteringProblem.jl:")
     filt_prob = FilteringProblem(st_mod, ob_mod)
     
     print("  struct FilteringProblem")
-    print(".")
+    print("-")
     @test filt_prob isa FilteringProblem{Int64,Float64,ContinuousTime,DiscreteTime,TestStateModel,TestObservationModel}
-    println("DONE.")
+    println("DONE")
     
     print("  method state_model")
-    print(".")
+    print("-")
     @test state_model(filt_prob) isa TestStateModel
-    println("DONE.")
+    println("DONE")
     
     print("  method obs_model")
-    print(".")
+    print("-")
     @test obs_model(filt_prob) isa TestObservationModel
-    println("DONE.")
+    println("DONE")
     
 end; #FilteringProblem.jl

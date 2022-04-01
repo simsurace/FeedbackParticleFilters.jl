@@ -32,7 +32,7 @@ end
 ###### METHODS ######
 #####################  
     
-initial_condition(fpf::FPF) = fpf.state_model.init
+initial_condition(fpf::FPF) = initial_condition(state_model(fpf))
 no_of_particles(fpf::FPF) = fpf.N
 no_of_particles(st::FPFState) = no_of_particles(st.ensemble)
 state_model(fpf::FPF) = fpf.state_model

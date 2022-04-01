@@ -1,7 +1,7 @@
 name = "FeedbackParticleFilters"
 uuid = "f4440bb6-80da-11e9-1db0-85cc1897f664"
 authors = ["Simone Carlo Surace <simsurace@gmx.net>"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
@@ -13,7 +13,7 @@ Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
-julia = "1"
+julia = "1.6"
 
 [extras]
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"

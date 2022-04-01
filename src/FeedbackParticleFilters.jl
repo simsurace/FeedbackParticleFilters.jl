@@ -292,7 +292,8 @@ export
     ppFPF,
     ppFPFState,
     propagate!, 
-    assimilate!
+    assimilate!,
+    flow_method
 
 
 ####################################

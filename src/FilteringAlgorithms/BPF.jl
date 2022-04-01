@@ -23,7 +23,7 @@ end
 ###### METHODS ######
 #####################  
     
-initial_condition(filter::BPF) = filter.state_model.init
+initial_condition(filter::BPF) = initial_condition(state_model(filter))
 no_of_particles(filter::BPF) = filter.N
 no_of_particles(st::BPFState) = no_of_particles(st.ensemble)
 state_model(filter::BPF) = filter.state_model
