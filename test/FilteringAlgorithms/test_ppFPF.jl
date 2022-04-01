@@ -19,13 +19,13 @@ println("Testing ppFPF.jl:")
     eq_dt  = PoissonEquation(x -> -sum(h(x)), ens)
     eq_dN  = PoissonEquation(x -> log.(h(x)), ens)
     state = ppFPFState(ens, eq_dN, eq_dt)
-    print(".")
+    print("-")
     @test state.ensemble == ens
-    print(".")
+    print("-")
     @test state.eq_dt == eq_dt
-    print(".")
+    print("-")
     @test state.eq_dN == eq_dN
-    println("DONE.")
+    println("DONE")
 
     
     print("  inner constructor for ppFPF")
@@ -35,111 +35,111 @@ println("Testing ppFPF.jl:")
     g_method = DifferentialRKHSMethodS1(0.1, 0.01)
     f_method = DeterministicFlow(100, g_method, mod2pi!)
     fpf = ppFPF(st_mod, ob_mod, g_method, f_method, 10)
-    print(".")
+    print("-")
     @test fpf.state_model == st_mod
-    print(".")
+    print("-")
     @test fpf.obs_model == ob_mod
-    print(".")
+    print("-")
     @test fpf.gain_method == g_method
-    print(".")
+    print("-")
     @test fpf.flow_method == f_method
-    print(".")
+    print("-")
     @test fpf.N == 10
-    println("DONE.")
+    println("DONE")
 
     print("  method initial_condition")
-    print(".")
+    print("-")
     @test initial_condition(fpf) == Uniform(0,2π)
-    println("DONE.")
+    println("DONE")
 
     print("  method no_of_particles")
-    print(".")
+    print("-")
     @test no_of_particles(fpf) == 10
-    print(".")
+    print("-")
     @test no_of_particles(state) == 10
-    println("DONE.")
+    println("DONE")
 
     print("  method state_model")
-    print(".")
+    print("-")
     @test state_model(fpf) == st_mod
-    println("DONE.")
+    println("DONE")
 
     print("  method obs_model")
-    print(".")
+    print("-")
     @test obs_model(fpf) == ob_mod
-    println("DONE.")
+    println("DONE")
 
     print("  method gain_estimation_method")
-    print(".")
+    print("-")
     @test gain_estimation_method(fpf) == g_method
-    println("DONE.")
+    println("DONE")
 
     print("  method gain_estimation_method")
-    print(".")
+    print("-")
     @test flow_method(fpf) == f_method
-    println("DONE.")
+    println("DONE")
     
     print("  method for Statistics.mean")
-    print(".")
+    print("-")
     @test Statistics.mean(state) ≈ mean(ens)
-    println("DONE.")
+    println("DONE")
     
     print("  method for Statistics.cov")
-    print(".")
+    print("-")
     @test Statistics.cov(state) ≈ cov(ens)
-    println("DONE.")
+    println("DONE")
     
     print("  method for Statistics.var")
-    print(".")
+    print("-")
     @test Statistics.var(state) ≈ var(ens)
-    println("DONE.")
+    println("DONE")
 
     print("  outer constructors for ppFPFState")
     state2 = ppFPFState(fpf)
-    print(".")
+    print("-")
     @test no_of_particles(state2) == 10
-    print(".")
+    print("-")
     @test all(0 .<= state2.ensemble.positions .<= 2π)
     filt_prob = FilteringProblem(st_mod, ob_mod)
     state3 = ppFPFState(filt_prob, 20)
-    print(".")
+    print("-")
     @test no_of_particles(state3) == 20
-    println("DONE.")
+    println("DONE")
     
     print("  outer constructors for ppFPF")
     fpf2 = ppFPF(filt_prob, g_method, f_method, 100)
-    print(".")
+    print("-")
     @test no_of_particles(fpf2) == 100
-    println("DONE.")
+    println("DONE")
 
     print("  method initialize")
     state4 = initialize(fpf)
-    print(".")
+    print("-")
     @test state4 isa ppFPFState
-    print(".")
+    print("-")
     @test all(0 .<= state4.ensemble.positions .<= 2π)
-    println("DONE.")
+    println("DONE")
     
     print("  method assimilate!")
     oldstate = deepcopy(state)
     assimilate!([0, 1, 0, 1], state, fpf, 0.01)
-    print(".")
+    print("-")
     @test state.eq_dt.gain != oldstate.eq_dt.gain
     solve!(oldstate.eq_dt, g_method)
     @test state.eq_dt.gain ≈ oldstate.eq_dt.gain
     
-    print(".")
+    print("-")
     @test state.eq_dt.positions ≈ state.ensemble.positions
-    print(".")
+    print("-")
     @test state.ensemble != oldstate.ensemble
-    println("DONE.")
+    println("DONE")
     
     print("  method propagate!")
     oldstate = deepcopy(state)
     propagate!(state, fpf, 0.01)
-    print(".")
+    print("-")
     @test all(state.ensemble.positions .!= oldstate.ensemble.positions)
-    println("DONE.")
+    println("DONE")
     
     print("  method update!")
     state1 = initialize(fpf) 
@@ -149,9 +149,9 @@ println("Testing ppFPF.jl:")
     Random.seed!(0)
     propagate!(state2, fpf, 0.01)
     assimilate!([1, 1, 0, 0], state2, fpf, 0.01)
-    print(".")
+    print("-")
     @test state1.ensemble.positions ≈ state2.ensemble.positions
-    print(".")
+    print("-")
     @test state1.eq_dt.gain ≈ state2.eq_dt.gain
-    println("DONE.")
+    println("DONE")
 end; #ppFPF.jl

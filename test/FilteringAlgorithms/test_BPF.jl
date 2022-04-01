@@ -7,9 +7,9 @@ println("Testing BPF.jl:")
     print("  inner constructor for BPFState")
     ens   = WeightedParticleEnsemble(randn(3,10))
     state = BPFState(ens)
-    print(".")
+    print("-")
     @test state.ensemble == ens
-    println("DONE.")
+    println("DONE")
     
     @testset "constructor" begin
     print("  inner constructor for BPF")
@@ -22,102 +22,102 @@ println("Testing BPF.jl:")
     N      = 10
     alpha  = 0.5
     filter = BPF(st_mod, ob_mod, N, alpha)
-    print(".")
+    print("-")
     @test filter.state_model == st_mod
-    print(".")
+    print("-")
     @test filter.obs_model == ob_mod
-    print(".")
+    print("-")
     @test filter.N == N
-    print(".")
+    print("-")
     @test filter.alpha == alpha
-        println("DONE.")
+        println("DONE")
     
     print("  method initial_condition")
-    print(".")
+    print("-")
     @test initial_condition(filter) ≈ [0., 0., 0.]
-    println("DONE.")
+    println("DONE")
     
     print("  method no_of_particles")
-    print(".")
+    print("-")
     @test no_of_particles(filter) == N
-    print(".")
+    print("-")
     @test no_of_particles(state) == N
-    println("DONE.")
+    println("DONE")
     
     print("  method state_model")
-    print(".")
+    print("-")
     @test state_model(filter) == st_mod
-    println("DONE.")
+    println("DONE")
     
     print("  method obs_model")
-    print(".")
+    print("-")
     @test obs_model(filter) == ob_mod
-    println("DONE.")
+    println("DONE")
     
     print("  method for Statistics.mean")
-    print(".")
+    print("-")
     @test Statistics.mean(state) ≈ mean(ens)
-    println("DONE.")
+    println("DONE")
     
     print("  method for Statistics.cov")
-    print(".")
+    print("-")
     @test Statistics.cov(state) ≈ cov(ens)
-    println("DONE.")
+    println("DONE")
     
     print("  method for Statistics.var")
-    print(".")
+    print("-")
     @test Statistics.var(state) ≈ var(ens)
-    println("DONE.")
+    println("DONE")
     
     print("  outer constructors for BPFState")
     state2 = BPFState(filter)
-    print(".")
+    print("-")
     @test no_of_particles(state2) == N
-    print(".")
+    print("-")
     @test state2.ensemble.positions == zeros(3,N)
     filt_prob = FilteringProblem(st_mod, ob_mod)
     state3 = BPFState(filt_prob, 2*N)
-    print(".")
+    print("-")
     @test no_of_particles(state3) == 2*N
-    println("DONE.")
+    println("DONE")
     
     print("  outer constructors for BPF")
     filter2 = BPF(filt_prob, N, alpha)
-    print(".")
+    print("-")
     @test no_of_particles(filter2) == N
-    print(".")
+    print("-")
     @test filter2.alpha == alpha
-    println("DONE.")
+    println("DONE")
     
     print("  method initialize")
     state4 = initialize(filter)
-    print(".")
+    print("-")
     @test state4 isa BPFState
-    print(".")
+    print("-")
     @test state4.ensemble.positions == zeros(3,10)
-    print(".")
+    print("-")
     @test state4.ensemble.weights == StatsBase.ProbabilityWeights(fill(1/N, N))
-    println("DONE.")
+    println("DONE")
     end
     
     print("  method propagate!")
     @testset "propagate!" begin
-    f(x)     = -x
-    g(x)     = hcat([1.; -2.; 1.])  
-    h(x)     = [x[1] * x[2], x[2] * x[3]]
-    init     = [0., 0., 0.]
-    st_mod   = DiffusionStateModel(f, g, init)
-    ob_mod   = DiffusionObservationModel{Float64, Float64, typeof(h)}(3, 2, h)
-    N        = 2
-    alpha    = 0.5
-    filter   = BPF(st_mod, ob_mod, N, alpha)
-    state    = initialize(filter)  
+        f(x)     = -x
+        g(x)     = hcat([1.; -2.; 1.])  
+        h(x)     = [x[1] * x[2], x[2] * x[3]]
+        init     = [0., 0., 0.]
+        st_mod   = DiffusionStateModel(f, g, init)
+        ob_mod   = DiffusionObservationModel{Float64, Float64, typeof(h)}(3, 2, h)
+        N        = 2
+        alpha    = 0.5
+        filter   = BPF(st_mod, ob_mod, N, alpha)
+        state    = initialize(filter)  
         state1   = deepcopy(state)
         propagate!(state1, filter, 0.01)
-    print(".")
+        print("-")
         @test all(state.ensemble.positions .!= state1.ensemble.positions)
     end
-    println("DONE.")
+    println("DONE")
     
     print("  method assimilate!")
     @testset "assimilate!" begin
@@ -136,9 +136,9 @@ println("Testing BPF.jl:")
         dY       = [0.1, 0.2]
         dt       = 0.01
         assimilate!(dY, state, filter, dt)
-        print(".")
+        print("-")
         @test state.ensemble.positions == oldstate.ensemble.positions
-        print(".")
+        print("-")
         @test state.ensemble.weights != oldstate.ensemble.weights
         
         h2(x)     = [x[1]^2, x[2]^2]
@@ -149,11 +149,11 @@ println("Testing BPF.jl:")
         state    = BPFState(ens)
         oldstate = deepcopy(state)
         assimilate!(dN, state, filter, dt)
-        print(".")
+        print("-")
         @test state.ensemble.positions == oldstate.ensemble.positions
-        print(".")
+        print("-")
         @test state.ensemble.weights != oldstate.ensemble.weights
-        println("DONE.")
+        println("DONE")
         
         print("  method update!")
         state  = initialize(filter) 
@@ -163,11 +163,11 @@ println("Testing BPF.jl:")
         Random.seed!(0)
         propagate!(state2, filter, 0.01)
         assimilate!([0.01, -0.02], state2, filter, 0.01)
-        print(".")
+        print("-")
         @test state.ensemble.positions ≈ state2.ensemble.positions
-        print(".")
+        print("-")
         @test state.ensemble.weights ≈ state2.ensemble.weights
-        println("DONE.")
+        println("DONE")
     end
     
 end; #BPF.jl

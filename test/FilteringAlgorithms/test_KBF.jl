@@ -18,46 +18,46 @@ println("Testing KBF.jl:")
     
     print("  inner constructor for KBState")
     init = KBState(MultivariateGaussian(m,P))
-    print(".")
+    print("-")
     @test typeof(init) == KBState{MultivariateGaussian{Float64,Array{Float64,1},Array{Float64,2}}}
-    println("DONE.")
+    println("DONE")
     
     print("  inner constructor for KBF")
     kbf = KBF(A, BB, C, CC, init)
-    print(".")
+    print("-")
     @test typeof(kbf) == KBF{Array{Float64,2},Array{Float64,2},Array{Float64,2},Array{Float64,2},KBState{MultivariateGaussian{Float64,Array{Float64,1},Array{Float64,2}}}}
-    print(".")
+    print("-")
     @test_throws DimensionMismatch KBF(randn(1,2), BB, C, CC, init)
-    println("DONE.")
+    println("DONE")
     
     print("  method initial_condition")
-    print(".")
+    print("-")
     @test initial_condition(kbf) == kbf.init
-    println("DONE.")
+    println("DONE")
     
     print("  method for Statistics.mean")
-    print(".")
+    print("-")
     @test Statistics.mean(init) == init.gauss.mean
-    println("DONE.")
+    println("DONE")
     
     print("  method for Statistics.cov")
-    print(".")
+    print("-")
     @test Statistics.cov(init) == init.gauss.cov
-    println("DONE.")
+    println("DONE")
     
     print("  method for Statistics.var")
-    print(".")
+    print("-")
     @test Statistics.var(init) == LinearAlgebra.diag(init.gauss.cov)
-    println("DONE.")
+    println("DONE")
     
     print("  outer constructors for KBState")
     init2 = KBState(m, P)
-    print(".")
+    print("-")
     @test init2 == init
     init3 = KBState(3)
-    print(".")
+    print("-")
     @test iszero(init3.gauss.mean)
-    print(".")
+    print("-")
     @test iszero(init3.gauss.cov)
     
     
@@ -74,61 +74,61 @@ println("Testing KBF.jl:")
     
     
     init4  = KBState(f_prob)
-    print(".")
+    print("-")
     @test init4.gauss.mean == [0.0, 0.0]
-    print(".")
+    print("-")
     @test init4.gauss.cov == [4.746796851882334 -5.543824348282954e-5; -5.543824348282954e-5 3.3192089048776765]
-    println("DONE.")
+    println("DONE")
     
     print("  outer constructors for KBF")
     kbf2 = KBF(A, B, C, init)
-    print(".")
+    print("-")
     @test kbf2.BB == BB
-    print(".")
+    print("-")
     @test kbf2.CC == CC
-    print(".")
+    print("-")
     @test kbf2.init == init
     
     kbf3 = KBF(A, B, C)
-    print(".")
+    print("-")
     @test typeof(kbf3) == KBF{Array{Float64,2},Array{Float64,2},Array{Float64,2},Array{Float64,2},KBState{MultivariateGaussian{Float64,Array{Float64,1},Array{Float64,2}}}}
-    print(".")
+    print("-")
     @test kbf3.BB == BB
-    print(".")
+    print("-")
     @test kbf3.CC == CC
-    print(".")
+    print("-")
     @test iszero(kbf3.init.gauss.mean)
-    print(".")
+    print("-")
     @test kbf3.init.gauss.cov ≈ [4.746796851882334 -5.543824348282954e-5; -5.543824348282954e-5 3.3192089048776765]
     
     kbf4 = KBF(f_prob)
-    print(".")
+    print("-")
     @test typeof(kbf4) == KBF{Array{Float64,2},Array{Float64,2},Array{Float64,2},Array{Float64,2},KBState{MultivariateGaussian{Float64,Array{Float64,1},Array{Float64,2}}}}
-    print(".")
+    print("-")
     @test kbf4.BB == BB
-    print(".")
+    print("-")
     @test kbf4.CC == CC
-    print(".")
+    print("-")
     @test iszero(kbf4.init.gauss.mean)
-    print(".")
+    print("-")
     @test kbf4.init.gauss.cov ≈ [4.746796851882334 -5.543824348282954e-5; -5.543824348282954e-5 3.3192089048776765]
-    println("DONE.")
+    println("DONE")
     
     print("  method initialize")
     init5 = initialize(kbf4)
-    print(".")
+    print("-")
     @test init5 == kbf4.init
-    println("DONE.")
+    println("DONE")
     
     print("  method update!")
-    print(".")
+    print("-")
     state = deepcopy(kbf3.init)
     update!(state, kbf3, [0.1, 0.2, 0.3], 0.01)
-    print(".")
+    print("-")
     @test state.gauss.mean ≈ [6.6454047161483025, 6.638340196214477 ]
-    print(".")
+    print("-")
     @test state.gauss.cov ≈ [1.5924097544324285 -3.151122632746998; -3.151122632746998 0.12439518287453177]
-    println("DONE.")
+    println("DONE")
     
     
 end; #KBF.jl
