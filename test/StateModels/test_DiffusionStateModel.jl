@@ -1,4 +1,4 @@
-using FeedbackParticleFilters, Distributions, Random, PDMats, FillArrays
+using FeedbackParticleFilters, Distributions, LinearAlgebra, Random, PDMats, FillArrays
 
 println("Testing DiffusionStateModel.jl:")
 
@@ -6,7 +6,7 @@ println("Testing DiffusionStateModel.jl:")
     
     f(x::AbstractVector) = [x[1]*x[2], x[1]-x[3], x[1]+x[2]*x[3]]
     g(x::AbstractVector) = [x[1] x[2]; x[2] x[3]; 0. 1.]
-    init                 = MvNormal(3, 1.)
+    init                 = MvNormal(LinearAlgebra.Diagonal(FillArrays.Fill(1., 3)))
     
     print("  inner constructor")
     mod = DiffusionStateModel(f, g, init)
