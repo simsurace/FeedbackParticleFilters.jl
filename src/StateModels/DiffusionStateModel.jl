@@ -103,7 +103,10 @@ function initialize(model::DiffusionStateModel{T, F1, F2, TI}) where {T, F1, F2,
     end
 end
                             
-initialize(model::DiffusionStateModel{T, F1, F2, TI}) where TI<:AbstractVector{T} where {T, F1, F2}        = model.init
+function initialize(model::DiffusionStateModel{T, F1, F2, TI}) where 
+    TI<:AbstractVector{T} where {T, F1, F2}
+    return model.init
+end
                 
    
                             
@@ -113,7 +116,7 @@ initialize(model::DiffusionStateModel{T, F1, F2, TI}) where TI<:AbstractVector{T
 
 Returns the drift function ``f`` of the diffusion model ``dX_t = f(X_t)dt + g(X_t)dW_t``.
 """                
-drift_function(model::DiffusionStateModel)     = drift(model)
+drift_function(model::DiffusionStateModel) = drift(model)
                             
                             
                             
