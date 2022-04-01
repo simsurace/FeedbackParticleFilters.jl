@@ -14,21 +14,29 @@
 
 This package's aim is to provide a versatile and efficient feedback particle filter implementation in Julia, with abstractions to flexibly construct, run, and analyze feedback particle filters for a variety of uni- and multivariate filtering problems with both diffusion and point process observations.
 
-In particular, the following features are planned to be implemented in FeedbackParticleFilters:
-* Types for hidden state and observation models: diffusions, Poisson processes, etc.
-* A variety of gain estimation methods
-* Automatic filter deployment and simulation of the state and filtering equations
-* Storing of intermediate (trajectory) data from simulation
-* An interface to the powerful solvers from the [DifferentialEquations](https://github.com/JuliaDiffEq/DifferentialEquations.jl) package
+It provides implementations of the following algorithms:
+- Kalman-Bucy filter `KBF`
+- Feedback Particle Filter `FPF`
+- Bootstrap Particle Filter (weighted) `BPF`
+- Point-process Feedback Particle Filter `ppFPF`
+- Ensemble Kushner-Stratonovich-Poisson Filter `EKSPF`
+
+as well as
+* Hidden state and observation models: diffusions, Poisson processes, etc.
+* A variety of gain estimation methods: constant gain, semigroup, reproducing kernel Hilbert space, etc.
+* Deterministic particle flow
+
+If you have questions or comments, please open an issue!
 
 ## Installation
 
-Use the built-in package manager:
+This package is officially registered.
+To install it, use the built-in package manager:
 
 ```julia
-using Pkg
-Pkg.add("FeedbackParticleFilters")
+pkg> add FeedbackParticleFilters
 ```
+The package is currently tested on Julia 1.6-1.8, but should work on earlier versions too.
 
 ## Usage
 
