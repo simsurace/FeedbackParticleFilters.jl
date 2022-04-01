@@ -1,3 +1,4 @@
 *.cov
 *-checkpoint.*
 docs/build/
+Manifest.toml
