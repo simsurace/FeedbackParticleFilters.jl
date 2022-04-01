@@ -24,7 +24,7 @@ end
 ###### METHODS ######
 #####################  
     
-initial_condition(ekspf::EKSPF) = ekspf.state_model.init
+initial_condition(ekspf::EKSPF) = initial_condition(state_model(ekspf))
 no_of_particles(ekspf::EKSPF) = ekspf.N
 state_model(ekspf::EKSPF) = ekspf.state_model
 obs_model(ekspf::EKSPF) = ekspf.obs_model

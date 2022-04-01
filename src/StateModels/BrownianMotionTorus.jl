@@ -20,7 +20,7 @@ end
 ### BASIC METHODS ###
 #####################
             
-initial_condition(model::BrownianMotionTorus) = Uniform(0,2π)
+initial_condition(::BrownianMotionTorus) = Uniform(0,2π)
 
 state_dim(model::BrownianMotionTorus) = model.n
 

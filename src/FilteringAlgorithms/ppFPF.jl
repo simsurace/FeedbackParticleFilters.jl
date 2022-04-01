@@ -33,7 +33,7 @@ end
 ###### METHODS ######
 #####################  
     
-initial_condition(filter::ppFPF) = filter.state_model.init
+initial_condition(filter::ppFPF) = initial_condition(state_model(filter))
 no_of_particles(filter::ppFPF) = filter.N
 no_of_particles(st::ppFPFState) = no_of_particles(st.ensemble)
 state_model(filter::ppFPF) = filter.state_model
@@ -88,7 +88,7 @@ function assimilate!(dN, filter_state::ppFPFState, filt_algo::ppFPF, dt)
     # dt update
     solve!(eq_dt, method)
 
-    ensemble.positions .+= dt * view(eq_dt.gain, :, :, 1)
+    ensemble.positions .+= dt .* view(eq_dt.gain, :, :, 1)
         
     # event update
     logl(x) = LinearAlgebra.dot(eq_dN.h(x), dN)

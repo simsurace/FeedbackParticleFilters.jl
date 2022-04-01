@@ -96,6 +96,7 @@ end
     include("FilteringAlgorithms/test_BPF.jl")
     include("FilteringAlgorithms/test_KBF.jl")
     include("FilteringAlgorithms/test_FPF.jl")
+    include("FilteringAlgorithms/test_ppFPF.jl")
 end
 
 
