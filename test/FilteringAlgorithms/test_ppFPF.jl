@@ -142,6 +142,7 @@ println("Testing ppFPF.jl:")
     println("DONE")
     
     print("  method update!")
+    fpf = ppFPF(st_mod, ob_mod, g_method, f_method, 100)
     state1 = initialize(fpf) 
     state2 = deepcopy(state1)
     Random.seed!(0)
