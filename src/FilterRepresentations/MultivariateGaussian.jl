@@ -1,7 +1,8 @@
 @doc raw"""
-    UnweightedParticleEnsemble{T}
+    MultivariateGaussian(mean, cov)
 
-An ensemble of `N` particles, each of dimension `n`.
+A representation of a multivariate normal distribution with specified mean
+and covariance matrix.
 """
 struct MultivariateGaussian{S, TM, TP} <: ParametricRepresentation{Vector{S}, S}
     mean::TM
